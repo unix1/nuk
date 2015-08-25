@@ -17,9 +17,9 @@
     nuk_user_store_server_store_validate/1
 ]).
 
-%% ============================================================================
+%%====================================================================
 %% ct functions
-%% ============================================================================
+%%====================================================================
 
 all() ->
     [
@@ -43,9 +43,9 @@ init_per_testcase(_, Config) ->
 end_per_testcase(_, _Config) ->
     ok.
 
-%% ============================================================================
+%%====================================================================
 %% Tests
-%% ============================================================================
+%%====================================================================
 
 nuk_user_store_server_get(_) ->
     ok = nuk_user_store_server:put(<<"GoodUser1">>, <<"GoodPass1">>),
@@ -62,6 +62,8 @@ nuk_user_store_server_validate_false(_) ->
 
 nuk_user_store_server_store_validate(_) ->
     ok = nuk_user_store_server:put(<<"GoodUser1">>, <<"GoodPass1">>),
-    {ok, User} = nuk_user_store_server:validate(<<"GoodUser1">>, <<"GoodPass1">>),
+    ok = nuk_user_store_server:put(<<"GoodUser2">>, <<"GoodPass2">>),
+    {ok, _User1} = nuk_user_store_server:validate(<<"GoodUser1">>, <<"GoodPass1">>),
+    {ok, _User2} = nuk_user_store_server:validate(<<"GoodUser2">>, <<"GoodPass2">>),
     {error, wrong_password, _} = nuk_user_store_server:validate(<<"GoodUser1">>, <<"BadPass">>),
     {error, user_not_found, _} = nuk_user_store_server:validate(<<"BadUser1">>, <<"GoodPass1">>).
