@@ -7,11 +7,18 @@
 
 -behaviour(gen_server).
 
+%% Supervision
 -export([start_link/0, init/1]).
+
+%% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
+
+%% API
 -export([delete/1, get/1, put/2, validate/2]).
 
-%%%%% Supervision functions %%%%%
+%%====================================================================
+%% Supervision
+%%====================================================================
 
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
@@ -19,24 +26,25 @@ start_link() ->
 init([]) ->
     {ok, #{data => #{}}}.
 
-%%%%% User functions %%%%%
+%%====================================================================
+%% API
+%%====================================================================
 
-%% Delete a user
 delete(Username) ->
     ok = gen_server:call(?MODULE, {delete, Username}).
 
 get(Username) ->
     gen_server:call(?MODULE, {get, Username}).
 
-%% Create a new or update an existing user
 put(Username, Password) ->
     ok = gen_server:call(?MODULE, {put, Username, Password}).
 
-%% Find user
 validate(Username, Password) ->
     gen_server:call(?MODULE, {validate, Username, Password}).
 
-%%%%% Server callbacks %%%%%
+%%====================================================================
+%% Behavior callbacks
+%%====================================================================
 
 handle_call({delete, Username}, _From, #{data := Data} = State) ->
     NewData = delete_user(Username, Data),
@@ -47,7 +55,7 @@ handle_call({get, Username}, _From, #{data := Data} = State) ->
     {reply, lookup_user(Username, Data), State};
 
 handle_call({put, Username, Password}, _From, #{data := Data} = State) ->
-    NewState = State#{data := Data#{Username => #{password => Password}}},
+    NewState = State#{data := Data#{Username => nuk_user:new(Username, Password)}},
     {reply, ok, NewState};
 
 handle_call({validate, Username, Password}, _From, #{data := Data} = State) ->
@@ -75,7 +83,8 @@ lookup_user(Username, Data) ->
         error:{badkey, Username} -> {error, user_not_found, Username}
     end.
 
-check_password(#{password := StoredPassword}, EnteredPassword) ->
+check_password(User, EnteredPassword) ->
+    StoredPassword = nuk_user:get_password(User),
     case StoredPassword =:= EnteredPassword of
         true -> true;
         _ -> false
