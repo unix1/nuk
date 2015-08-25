@@ -7,11 +7,18 @@
 
 -behaviour(gen_server).
 
+%% Supervision
 -export([start_link/0, init/1]).
+
+%% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
+
+%% API
 -export([login/3]).
 
-%%%%% Supervision functions %%%%%
+%%====================================================================
+%% Supervision
+%%====================================================================
 
 start_link() ->
     gen_server:start_link(?MODULE, [], []).
@@ -19,14 +26,18 @@ start_link() ->
 init([]) ->
     {ok, 0}.
 
-%%%%% User functions %%%%%
+%%====================================================================
+%% API
+%%====================================================================
 
-%% login.
 login(Pid, Username, Password) ->
     {ok, SessionId} = gen_server:call(Pid, {login, Username, Password}),
     SessionId.
 
-%%%%% Server callbacks %%%%%
+%%====================================================================
+%% Behavior callbacks
+%%====================================================================
+
 handle_call({login, _Username, _Password}, _From, State) ->
     SessionId = list_to_binary(pid_to_list(self())),
     {reply, {ok, SessionId}, State}.

@@ -7,11 +7,18 @@
 
 -behaviour(gen_server).
 
+%% Supervision
 -export([start_link/0, init/1]).
+
+%% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
+
+%% API
 -export([game_start/3, game_end/1]).
 
-%%%%% Supervision functions %%%%%
+%%====================================================================
+%% Supervision
+%%====================================================================
 
 start_link() ->
     gen_server:start_link(?MODULE, [], []).
@@ -19,7 +26,9 @@ start_link() ->
 init([]) ->
     {ok, 0}.
 
-%%%%% User functions %%%%%
+%%====================================================================
+%% API
+%%====================================================================
 
 %% start a game.
 game_start(Pid, Players, Game) ->
@@ -29,7 +38,10 @@ game_start(Pid, Players, Game) ->
 game_end(Pid) ->
     ok = gen_server:call(Pid, {game_end}).
 
-%%%%% Server callbacks %%%%%
+%%====================================================================
+%% Behavior callbacks
+%%====================================================================
+
 handle_call({game_start, _Players, _Game}, _From, State) ->
     {reply, ok, State};
 handle_call({game_end}, _From, State) ->
