@@ -31,9 +31,7 @@ init([]) ->
 %%====================================================================
 
 children() ->
-    %% TODO remove nuk_lobby_sup - replaced by user
-    LobbySup = ?CHILD(nuk_lobby_sup, nuk_lobby_sup, [], supervisor),
     UserSup = ?CHILD(nuk_user_sup, nuk_user_sup, [], supervisor),
     UserStoreSup = ?CHILD(nuk_user_store_sup, nuk_user_store_sup, [], supervisor),
     GameSup = ?CHILD(nuk_game_sup, nuk_game_sup, [], supervisor),
-    [UserSup, LobbySup, UserStoreSup, GameSup].
+    [UserSup, UserStoreSup, GameSup].
