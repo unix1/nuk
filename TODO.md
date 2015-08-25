@@ -51,9 +51,13 @@ nuk_games:end(Session, GameSession).
 Desired game engine interface
 -----------------------------
 ```
+nuk_games:initialize ------> nuk_game_engine:initialize ------> {ok, GameState}
 
-nuk_games:start ------> nuk_game_engine:start ------> {ok, GameState}
+nuk_games:join       ------> nuk_game_engine:join       ------> {ok, GameState}
 
+nuk_games:start      ------> nuk_game_engine:start      ------> {ok, GameState}
+
+nuk_games:move       ------> nuk_game_engine:move       ------> {ok, GameState}
 
 ```
 
