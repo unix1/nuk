@@ -14,9 +14,9 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([delete/1, get/1, put/2, validate/2]).
+-export([delete/1, get/1, put/1, validate/2]).
 
-%%====================================================================
+%%===================================================================
 %% Supervision
 %%====================================================================
 
@@ -40,9 +40,9 @@ delete(Username) ->
 get(Username) ->
     gen_server:call(?MODULE, {get, Username}).
 
-%% TODO pass User type here instead of username/password
-put(Username, Password) ->
-    ok = gen_server:call(?MODULE, {put, Username, Password}).
+-spec put(User :: nuk_user:user()) -> ok.
+put(User) ->
+    ok = gen_server:call(?MODULE, {put, User}).
 
 -spec validate(Username :: string(), Password :: string()) ->
     {ok, nuk_user:user()} |
@@ -62,8 +62,8 @@ handle_call({delete, Username}, _From, #{data := Data} = State) ->
 handle_call({get, Username}, _From, #{data := Data} = State) ->
     {reply, lookup_user(Username, Data), State};
 
-handle_call({put, Username, Password}, _From, #{data := Data} = State) ->
-    NewState = State#{data := Data#{Username => nuk_user:new(Username, Password)}},
+handle_call({put, #{username := Username} = User}, _From, #{data := Data} = State) ->
+    NewState = State#{data := Data#{Username => User}},
     {reply, ok, NewState};
 
 handle_call({validate, Username, Password}, _From, #{data := Data} = State) ->

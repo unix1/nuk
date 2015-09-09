@@ -52,12 +52,12 @@ end_per_testcase(_, _Config) ->
 %%====================================================================
 
 nuk_user_store_server_get(_) ->
-    ok = nuk_user_store_server:put("GoodUser1", "GoodPass1"),
+    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
     {error, user_not_found, _Extra} = nuk_user_store_server:get("BadUser"),
     {ok, User} = nuk_user_store_server:get("GoodUser1").
 
 nuk_user_store_server_delete(_) ->
-    ok = nuk_user_store_server:put("GoodUser1", "GoodPass1"),
+    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
     ok = nuk_user_store_server:delete("GoodUser1"),
     {error, user_not_found, _} = nuk_user_store_server:get("GoodUser1").
 
@@ -65,8 +65,8 @@ nuk_user_store_server_validate_false(_) ->
     {error, user_not_found, _Extra} = nuk_user_store_server:validate("BadUser", "BadPass").
 
 nuk_user_store_server_store_validate(_) ->
-    ok = nuk_user_store_server:put("GoodUser1", "GoodPass1"),
-    ok = nuk_user_store_server:put("GoodUser2", "GoodPass2"),
+    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
+    ok = nuk_user_store_server:put(nuk_user:new("GoodUser2", "GoodPass2")),
     {ok, _User1} = nuk_user_store_server:validate("GoodUser1", "GoodPass1"),
     {ok, _User2} = nuk_user_store_server:validate("GoodUser2", "GoodPass2"),
     {error, wrong_password, _} = nuk_user_store_server:validate("GoodUser1", "BadPass"),
@@ -77,7 +77,7 @@ nuk_user_server_login_bad(_) ->
     {error, user_not_found, "BadUser"} = nuk_user_server:login(ServerPid, "BadUser", "BadPass").
 
 nuk_user_server_login_good(_) ->
-    ok = nuk_user_store_server:put("GoodUser1", "GoodPass1"),
+    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
     %% TODO create a wrapper api function for this
     {ok, ServerPid} = supervisor:start_child(nuk_user_sup, []),
     {ok, _User} = nuk_user_server:login(ServerPid, "GoodUser1", "GoodPass1").
