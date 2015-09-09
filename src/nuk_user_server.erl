@@ -24,23 +24,31 @@ start_link() ->
     gen_server:start_link(?MODULE, [], []).
 
 init([]) ->
-    {ok, 0}.
+    {ok, #{session => nuk_user_session:new()}}.
 
 %%====================================================================
 %% API
 %%====================================================================
 
+-spec login(Pid :: pid(), Username :: string(), Password :: string()) ->
+    {ok, nuk_user:user()} |
+    {error, atom(), string()}.
 login(Pid, Username, Password) ->
-    {ok, SessionId} = gen_server:call(Pid, {login, Username, Password}),
-    SessionId.
+    gen_server:call(Pid, {login, Username, Password}).
 
 %%====================================================================
 %% Behavior callbacks
 %%====================================================================
 
-handle_call({login, _Username, _Password}, _From, State) ->
-    SessionId = list_to_binary(pid_to_list(self())),
-    {reply, {ok, SessionId}, State}.
+handle_call({login, Username, Password}, _From, #{session := Session} = State) ->
+    case nuk_user_store_server:validate(Username, Password) of
+        {ok, User} ->
+            SessionNew = nuk_user_session:set_user(Session, User),
+            StateNew = State#{session := SessionNew},
+            {reply, {ok, User}, StateNew};
+        {error, Reason, Extra} ->
+            {stop, normal, {error, Reason, Extra}, State}
+    end.
 
 handle_cast(_Msg, State) -> {noreply, State}.
 

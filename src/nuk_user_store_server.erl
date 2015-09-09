@@ -30,15 +30,23 @@ init([]) ->
 %% API
 %%====================================================================
 
+-spec delete(Username :: string()) -> ok.
 delete(Username) ->
     ok = gen_server:call(?MODULE, {delete, Username}).
 
+-spec get(Username :: string()) ->
+    {ok, nuk_user:user()} |
+    {error, user_not_found, string()}.
 get(Username) ->
     gen_server:call(?MODULE, {get, Username}).
 
+%% TODO pass User type here instead of username/password
 put(Username, Password) ->
     ok = gen_server:call(?MODULE, {put, Username, Password}).
 
+-spec validate(Username :: string(), Password :: string()) ->
+    {ok, nuk_user:user()} |
+    {error, wrong_password | user_not_found, string()}.
 validate(Username, Password) ->
     gen_server:call(?MODULE, {validate, Username, Password}).
 
@@ -84,18 +92,14 @@ lookup_user(Username, Data) ->
     end.
 
 check_password(User, EnteredPassword) ->
-    StoredPassword = nuk_user:get_password(User),
-    case StoredPassword =:= EnteredPassword of
-        true -> true;
-        _ -> false
-    end.
+    nuk_user:check_password(User, EnteredPassword).
 
 validate_user_with_password(Username, Password, Data) ->
     case lookup_user(Username, Data) of
         {ok, User} ->
             case check_password(User, Password) of
                 true -> {ok, User};
-                _ -> {error, wrong_password, <<"">>}
+                _ -> {error, wrong_password, "Wrong password"}
             end;
         {error, Reason, Extra} -> {error, Reason, Extra}
     end.
