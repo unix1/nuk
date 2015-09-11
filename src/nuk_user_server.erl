@@ -31,7 +31,7 @@ init([]) ->
 %%====================================================================
 
 -spec login(Pid :: pid(), Username :: string(), Password :: string()) ->
-    {ok, nuk_user:user()} |
+    {ok, string()} |
     {error, atom(), string()}.
 login(Pid, Username, Password) ->
     gen_server:call(Pid, {login, Username, Password}).
@@ -45,7 +45,7 @@ handle_call({login, Username, Password}, _From, #{session := Session} = State) -
         {ok, User} ->
             SessionNew = nuk_user_session:set_user(Session, User),
             StateNew = State#{session := SessionNew},
-            {reply, {ok, User}, StateNew};
+            {reply, {ok, pid_to_list(self())}, StateNew};
         {error, Reason, Extra} ->
             {stop, normal, {error, Reason, Extra}, State}
     end.
