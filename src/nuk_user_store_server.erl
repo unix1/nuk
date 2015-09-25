@@ -6,6 +6,7 @@
 -module(nuk_user_store_server).
 
 -behaviour(gen_server).
+-behaviour(nuk_user_storage).
 
 %% Supervision
 -export([start_link/0, init/1]).
