@@ -3,6 +3,8 @@ TODO
 
 Users and sessions
 ------------------
+- separate user storage into application/behavior
+- separate session storage into application/behavior
 - user sessions storage
 - wrapper functions performed by simple_one_for_one workers (user login, sessions)
 
@@ -11,10 +13,6 @@ Game
 - game functions
 - game engine behavior
 
-Other
------
-- separate user storage into application/behavior
-- separate session storage into application/behavior
 
 Desired client interface
 ------------------------
