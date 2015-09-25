@@ -12,5 +12,4 @@
     {ok, string()} |
     {error, atom(), string()}.
 login(Username, Password) ->
-    {ok, ServerPid} = supervisor:start_child(nuk_user_sup, []),
-    nuk_user_server:login(ServerPid, Username, Password).
+    nuk_user_server:login(Username, Password).

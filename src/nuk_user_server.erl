@@ -14,7 +14,7 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([login/3]).
+-export([login/2]).
 
 %%====================================================================
 %% Supervision
@@ -30,10 +30,11 @@ init([]) ->
 %% API
 %%====================================================================
 
--spec login(Pid :: pid(), Username :: string(), Password :: string()) ->
+-spec login(Username :: string(), Password :: string()) ->
     {ok, string()} |
     {error, atom(), string()}.
-login(Pid, Username, Password) ->
+login(Username, Password) ->
+    {ok, Pid} = supervisor:start_child(nuk_user_sup, []),
     gen_server:call(Pid, {login, Username, Password}).
 
 %%====================================================================
