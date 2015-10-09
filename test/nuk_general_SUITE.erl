@@ -11,12 +11,11 @@
 
 %% Tests
 -export([
-    nuk_user_store_server_get/1,
-    nuk_user_store_server_delete/1,
-    nuk_user_store_server_validate_false/1,
+    nuk_users_get/1,
+    nuk_users_delete/1,
     nuk_user_store_server_store_validate/1,
-    nuk_user_server_login_bad/1,
-    nuk_user_server_login_good/1
+    nuk_users_login_bad/1,
+    nuk_users_login_good/1
 ]).
 
 %%====================================================================
@@ -25,12 +24,11 @@
 
 all() ->
     [
-        nuk_user_store_server_get,
-        nuk_user_store_server_delete,
-        nuk_user_store_server_validate_false,
+        nuk_users_get,
+        nuk_users_delete,
         nuk_user_store_server_store_validate,
-        nuk_user_server_login_bad,
-        nuk_user_server_login_good
+        nuk_users_login_bad,
+        nuk_users_login_good
     ].
 
 init_per_suite(Config) ->
@@ -51,30 +49,27 @@ end_per_testcase(_, _Config) ->
 %% Tests
 %%====================================================================
 
-nuk_user_store_server_get(_) ->
-    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
-    {error, user_not_found, _Extra} = nuk_user_store_server:get("BadUser"),
-    {ok, User} = nuk_user_store_server:get("GoodUser1").
+nuk_users_get(_) ->
+    ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
+    {error, user_not_found, _Extra} = nuk_users:get("BadUser"),
+    {ok, User} = nuk_users:get("GoodUser1").
 
-nuk_user_store_server_delete(_) ->
-    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
-    ok = nuk_user_store_server:delete("GoodUser1"),
-    {error, user_not_found, _} = nuk_user_store_server:get("GoodUser1").
-
-nuk_user_store_server_validate_false(_) ->
-    {error, user_not_found, _Extra} = nuk_user_store_server:validate("BadUser", "BadPass").
+nuk_users_delete(_) ->
+    ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
+    ok = nuk_users:delete("GoodUser1"),
+    {error, user_not_found, _} = nuk_users:get("GoodUser1").
 
 nuk_user_store_server_store_validate(_) ->
-    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
-    ok = nuk_user_store_server:put(nuk_user:new("GoodUser2", "GoodPass2")),
+    ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
+    ok = nuk_users:put(nuk_user:new("GoodUser2", "GoodPass2")),
     {ok, _User1} = nuk_user_store_server:validate("GoodUser1", "GoodPass1"),
     {ok, _User2} = nuk_user_store_server:validate("GoodUser2", "GoodPass2"),
     {error, wrong_password, _} = nuk_user_store_server:validate("GoodUser1", "BadPass"),
     {error, user_not_found, _} = nuk_user_store_server:validate("BadUser1", "GoodPass1").
 
-nuk_user_server_login_bad(_) ->
+nuk_users_login_bad(_) ->
     {error, user_not_found, "BadUser"} = nuk_users:login("BadUser", "BadPass").
 
-nuk_user_server_login_good(_) ->
-    ok = nuk_user_store_server:put(nuk_user:new("GoodUser1", "GoodPass1")),
+nuk_users_login_good(_) ->
+    ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
     {ok, _SessionId} = nuk_users:login("GoodUser1", "GoodPass1").
