@@ -6,7 +6,7 @@
 -module(nuk_users).
 
 %% API
--export([delete/1, get/1, put/1, login/2]).
+-export([delete/1, get/1, put/1, login/2, list/0]).
 
 -spec delete(Username :: string()) -> ok.
 delete(Username) ->
@@ -27,3 +27,7 @@ put(User) ->
     {error, atom(), string()}.
 login(Username, Password) ->
     nuk_user_server:login(Username, Password).
+
+-spec list() -> [nuk_user:user()].
+list() ->
+    nuk_user_store_server:list().

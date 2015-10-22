@@ -19,7 +19,7 @@ Desired client interface
 ```erlang
 
 %% login/logout
-Session = nuk_users:login(Username, Password).
+{ok, Session} = nuk_users:login(Username, Password).
 ok = nuk_users:logout(Session).
 
 %% returns list of all active users

@@ -15,7 +15,7 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([delete/1, get/1, put/1, validate/2]).
+-export([delete/1, get/1, list/0, put/1, validate/2]).
 
 %%===================================================================
 %% Supervision
@@ -41,6 +41,10 @@ delete(Username) ->
 get(Username) ->
     gen_server:call(?MODULE, {get, Username}).
 
+-spec list() -> [nuk_user:user()].
+list() ->
+    gen_server:call(?MODULE, {list}).
+
 -spec put(User :: nuk_user:user()) -> ok.
 put(User) ->
     ok = gen_server:call(?MODULE, {put, User}).
@@ -63,6 +67,9 @@ handle_call({delete, Username}, _From, #{data := Data} = State) ->
 handle_call({get, Username}, _From, #{data := Data} = State) ->
     {reply, lookup_user(Username, Data), State};
 
+handle_call({list}, _From, #{data := Data} = State) ->
+    {reply, list_users(Data), State};
+
 handle_call({put, #{username := Username} = User}, _From, #{data := Data} = State) ->
     NewState = State#{data := Data#{Username => User}},
     {reply, ok, NewState};
@@ -84,6 +91,9 @@ code_change(_OldVersion, State, _Extra) -> {ok, State}.
 
 delete_user(Username, Data) ->
     maps:remove(Username, Data).
+
+list_users(Data) ->
+    maps:values(Data).
 
 lookup_user(Username, Data) ->
     try maps:get(Username, Data) of
