@@ -1,13 +1,6 @@
 TODO
 ====
 
-Users and sessions
-------------------
-- separate user storage into application/behavior
-- separate session storage into application/behavior
-- user sessions storage
-- wrapper functions performed by simple_one_for_one workers (user login, sessions)
-
 Game
 ----
 - game functions
@@ -17,13 +10,6 @@ Game
 Desired client interface
 ------------------------
 ```erlang
-
-%% login/logout
-{ok, Session} = nuk_users:login(Username, Password).
-ok = nuk_users:logout(Session).
-
-%% returns list of all active users
-[User1|OtherUsers] = nuk_users:list_users().
 
 %% returns list of available games (game engines)
 [Game1|OtherGames] = nuk_games:list().
