@@ -14,7 +14,7 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([login/2, get_session/1]).
+-export([login/2, logout/1, get_session/1]).
 
 %%====================================================================
 %% Supervision
@@ -37,6 +37,10 @@ login(Username, Password) ->
     {ok, Pid} = supervisor:start_child(nuk_user_sup, []),
     gen_server:call(Pid, {login, Username, Password}).
 
+-spec logout(Pid :: pid()) -> ok.
+logout(Pid) ->
+    gen_server:call(Pid, {logout}).
+
 -spec get_session(Pid :: pid()) ->
     {ok, nuk_user_session:session()}.
 get_session(Pid) ->
@@ -55,6 +59,8 @@ handle_call({login, Username, Password}, _From, #{session := Session} = State) -
         {error, Reason, Extra} ->
             {stop, normal, {error, Reason, Extra}, State}
     end;
+handle_call({logout}, _From, State) ->
+    {stop, normal, ok, State};
 handle_call({get_session}, _From, #{session := Session} = State) ->
     {reply, {ok, Session}, State}.
 

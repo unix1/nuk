@@ -8,7 +8,7 @@
 -behaviour(nuk_user_session_storage).
 
 %% API
--export([get/1, list/0]).
+-export([get/1, delete/1, list/0]).
 
 %%====================================================================
 %% API
@@ -19,6 +19,11 @@
 get(SessionId) ->
     Pid = list_to_pid(SessionId),
     nuk_user_server:get_session(Pid).
+
+-spec delete(SessionId :: string()) -> ok.
+delete(SessionId) ->
+    Pid = list_to_pid(SessionId),
+    nuk_user_server:logout(Pid).
 
 -spec list() -> [nuk_user_session:session()].
 list() ->

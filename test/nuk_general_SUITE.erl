@@ -19,7 +19,8 @@
     nuk_users_list/1,
     nuk_user_sessions_list/1,
     nuk_user_session_set_user/1,
-    nuk_user_sessions_get/1
+    nuk_user_sessions_get/1,
+    nuk_user_sessions_delete/1
 ]).
 
 %%====================================================================
@@ -36,7 +37,8 @@ all() ->
         nuk_users_list,
         nuk_user_sessions_list,
         nuk_user_session_set_user,
-        nuk_user_sessions_get
+        nuk_user_sessions_get,
+        nuk_user_session_delete
     ].
 
 init_per_suite(Config) ->
@@ -109,3 +111,9 @@ nuk_user_sessions_get(_) ->
     {ok, SessionId1} = nuk_users:login("GoodUser1", "GoodPass1"),
     {ok, Session1} = nuk_user_sessions:get(SessionId1),
     User1 = nuk_user_session:get_user(Session1).
+
+nuk_user_sessions_delete(_) ->
+    ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
+    {ok, SessionId} = nuk_users:login("GoodUser1", "GoodPass1"),
+    ok = nuk_user_sessions:delete(SessionId),
+    [] = nuk_user_sessions:list().
