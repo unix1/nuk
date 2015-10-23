@@ -17,9 +17,9 @@
     nuk_users_login_bad/1,
     nuk_users_login_good/1,
     nuk_users_list/1,
-    nuk_user_sessions_list/1,
     nuk_user_session_set_user/1,
     nuk_user_sessions_get/1,
+    nuk_user_sessions_list/1,
     nuk_user_sessions_delete/1
 ]).
 
@@ -35,10 +35,10 @@ all() ->
         nuk_users_login_bad,
         nuk_users_login_good,
         nuk_users_list,
-        nuk_user_sessions_list,
         nuk_user_session_set_user,
         nuk_user_sessions_get,
-        nuk_user_session_delete
+        nuk_user_sessions_list,
+        nuk_user_sessions_delete
     ].
 
 init_per_suite(Config) ->
@@ -53,7 +53,19 @@ init_per_testcase(_, Config) ->
     Config.
 
 end_per_testcase(_, _Config) ->
+    clear_all_sessions(),
     ok.
+
+%%====================================================================
+%% Helpers
+%%====================================================================
+
+clear_all_sessions() ->
+    UserProcesses = supervisor:which_children(nuk_user_sup),
+    lists:foreach(fun({_, Pid, worker, [nuk_user_server]}) ->
+                      ok = nuk_user_server:logout(Pid)
+                      end,
+                  UserProcesses).
 
 %%====================================================================
 %% Tests
@@ -92,13 +104,6 @@ nuk_users_list(_) ->
     %% TODO list doesn't have to be in same order
     [User1, User2] = nuk_users:list().
 
-nuk_user_sessions_list(_) ->
-    nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
-    nuk_users:put(nuk_user:new("GoodUser2", "GoodPass2")),
-    {ok, SessionId1} = nuk_users:login("GoodUser1", "GoodPass1"),
-    {ok, SessionId2} = nuk_users:login("GoodUser2", "GoodPass2"),
-    [SessionId1, SessionId2] = nuk_user_sessions:list().
-
 nuk_user_session_set_user(_) ->
     User1 = nuk_user:new("GoodUser1", "GoodPass1"),
     Session1 = nuk_user_session:new(),
@@ -111,6 +116,16 @@ nuk_user_sessions_get(_) ->
     {ok, SessionId1} = nuk_users:login("GoodUser1", "GoodPass1"),
     {ok, Session1} = nuk_user_sessions:get(SessionId1),
     User1 = nuk_user_session:get_user(Session1).
+
+nuk_user_sessions_list(_) ->
+    nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
+    nuk_users:put(nuk_user:new("GoodUser2", "GoodPass2")),
+    {ok, SessionId1} = nuk_users:login("GoodUser1", "GoodPass1"),
+    {ok, SessionId2} = nuk_users:login("GoodUser2", "GoodPass2"),
+    {ok, Session1} = nuk_user_sessions:get(SessionId1),
+    {ok, Session2} = nuk_user_sessions:get(SessionId2),
+    %% TODO list doesn't have to be in same order
+    [Session1, Session2] = nuk_user_sessions:list().
 
 nuk_user_sessions_delete(_) ->
     ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),
