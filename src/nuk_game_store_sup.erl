@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk top level supervisor.
+%% @doc nuk game store supervisor
 %% @end
 %%%-------------------------------------------------------------------
 
--module(nuk_sup).
+-module(nuk_game_store_sup).
 
 -behaviour(supervisor).
 
@@ -31,8 +31,5 @@ init([]) ->
 %%====================================================================
 
 children() ->
-    UserSup = ?CHILD(nuk_user_sup, nuk_user_sup, [], supervisor),
-    UserStoreSup = ?CHILD(nuk_user_store_sup, nuk_user_store_sup, [], supervisor),
-    GameSup = ?CHILD(nuk_game_sup, nuk_game_sup, [], supervisor),
-    GameStoreSup = ?CHILD(nuk_game_store_sup, nuk_game_store_sup, [], supervisor),
-    [UserSup, UserStoreSup, GameSup, GameStoreSup].
+    UserStore = ?CHILD(nuk_game_store_server, nuk_game_store_server, [], worker),
+    [UserStore].

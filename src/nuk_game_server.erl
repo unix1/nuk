@@ -14,7 +14,7 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([game_start/3, game_end/1]).
+-export([create/2, start/2, finish/1]).
 
 %%====================================================================
 %% Supervision
@@ -30,21 +30,44 @@ init([]) ->
 %% API
 %%====================================================================
 
+%% create a new game session
+%% TODO move to init/1 - there's no need for a separate function
+-spec create(UserSessionId :: string(), GameName :: string()) ->
+    {ok, GameSessionId :: string()} |
+    {error, invalid_user_session, Extra :: string()} |
+    {error, invalid_game_name, Extra :: string()}.
+create(UserSessionId, GameName) ->
+    {ok, Pid} = supervisor:start_child(nuk_game_sup, []),
+    gen_server:call(Pid, {initialize, UserSessionId, GameName}).
+
 %% start a game.
-game_start(Pid, Players, Game) ->
-    ok = gen_server:call(Pid, {game_start, Players, Game}).
+-spec start(Pid :: pid(), UserSessionId :: string()) ->
+    ok |
+    {error, invalid_game_session, Extra :: string()} |
+    {error, invalid_user_session, Extra :: string()} |
+    {error, game_engine_error, Extra :: string()}.
+start(Pid, UserSessionId) ->
+    ok = gen_server:call(Pid, {start, UserSessionId}).
 
 %% end a game
-game_end(Pid) ->
-    ok = gen_server:call(Pid, {game_end}).
+%% TODO figure out finish
+-spec finish(Pid :: pid()) -> ok.
+finish(Pid) ->
+    ok = gen_server:call(Pid, {finish}).
 
 %%====================================================================
 %% Behavior callbacks
 %%====================================================================
 
-handle_call({game_start, _Players, _Game}, _From, State) ->
+handle_call({initialize, _UserSessionId, _GameName}, _From, State) ->
+    %% TODO look up game engine based on name
+    %% TODO invoke game engine
     {reply, ok, State};
-handle_call({game_end}, _From, State) ->
+handle_call({start, _UserSessionId}, _From, State) ->
+    %% TODO invoke game engine
+    {reply, ok, State};
+handle_call({finish}, _From, State) ->
+    %% TODO invoke game engine
     {reply, ok, State}.
 
 handle_cast(_Msg, State) -> {noreply, State}.
