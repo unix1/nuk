@@ -5,6 +5,8 @@ _rel
 cover
 deps
 ebin
+erl_crash.dump
 logs
+nuk.d
 relx
 test/*.beam
