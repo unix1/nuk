@@ -20,10 +20,7 @@
     nuk_user_session_set_user/1,
     nuk_user_sessions_get/1,
     nuk_user_sessions_list/1,
-    nuk_user_sessions_delete/1,
-    nuk_games_register_get/1,
-    nuk_games_unregister/1,
-    nuk_games_list/1
+    nuk_user_sessions_delete/1
 ]).
 
 %%====================================================================
@@ -41,10 +38,7 @@ all() ->
         nuk_user_session_set_user,
         nuk_user_sessions_get,
         nuk_user_sessions_list,
-        nuk_user_sessions_delete,
-        nuk_games_register_get,
-        nuk_games_unregister,
-        nuk_games_list
+        nuk_user_sessions_delete
     ].
 
 init_per_suite(Config) ->
@@ -52,7 +46,7 @@ init_per_suite(Config) ->
     Config.
 
 end_per_suite(_) ->
-    application:stop(gen_node),
+    application:stop(nuk),
     ok.
 
 init_per_testcase(_, Config) ->
@@ -138,22 +132,3 @@ nuk_user_sessions_delete(_) ->
     {ok, SessionId} = nuk_users:login("GoodUser1", "GoodPass1"),
     ok = nuk_user_sessions:delete(SessionId),
     [] = nuk_user_sessions:list().
-
-nuk_games_register_get(_) ->
-    Game1 = nuk_game:new("GoodGame1", nuk_game_bogus1),
-    ok = nuk_games:register(Game1),
-    {error, game_not_found, _} = nuk_games:get("BadGame"),
-    {ok, Game1} = nuk_games:get("GoodGame1").
-
-nuk_games_unregister(_) ->
-    ok = nuk_games:register(nuk_game:new("GoodGame1", nuk_game_bogus1)),
-    ok = nuk_games:unregister("GoodGame1"),
-    {error, game_not_found, _} = nuk_games:get("GoodGame1").
-
-nuk_games_list(_) ->
-    Game1 = nuk_game:new("GoodGame1", nuk_game_bogus1),
-    Game2 = nuk_game:new("GoodGame2", nuk_game_bogus2),
-    ok = nuk_games:register(Game1),
-    ok = nuk_games:register(Game2),
-    %% TODO list doesn't have to be in same order
-    [Game1, Game2] = nuk_games:list().
