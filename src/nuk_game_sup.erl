@@ -24,7 +24,7 @@ init([]) ->
     MaxTime = 3600,
     ChildSpec = {nuk_game_server,
                  {nuk_game_server, start_link, []},
-                 permanent,
+                 temporary,
                  5000, % shutdown time
                  worker,
                  [nuk_game_server]},
