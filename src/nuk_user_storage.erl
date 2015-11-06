@@ -13,3 +13,6 @@
 -callback validate(Username :: string(), Password :: string()) ->
     {ok, User :: nuk_user:user()} |
     {error, ErrorCode :: wrong_password | user_not_found, ErrorText :: string()}.
+
+-callback list() ->
+    [nuk_user:user()].
