@@ -1,4 +1,4 @@
--module(nuk_general_SUITE).
+-module(nuk_user_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
