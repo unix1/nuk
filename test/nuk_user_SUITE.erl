@@ -101,8 +101,8 @@ nuk_users_list(_) ->
     User2 = nuk_user:new("GoodUser2", "GoodPass2"),
     ok = nuk_users:put(User1),
     ok = nuk_users:put(User2),
-    %% TODO list doesn't have to be in same order
-    [User1, User2] = nuk_users:list().
+    Expected = lists:sort([User1, User2]),
+    Expected = lists:sort(nuk_users:list()).
 
 nuk_user_session_set_user(_) ->
     User1 = nuk_user:new("GoodUser1", "GoodPass1"),
@@ -124,8 +124,8 @@ nuk_user_sessions_list(_) ->
     {ok, SessionId2} = nuk_users:login("GoodUser2", "GoodPass2"),
     {ok, Session1} = nuk_user_sessions:get(SessionId1),
     {ok, Session2} = nuk_user_sessions:get(SessionId2),
-    %% TODO list doesn't have to be in same order
-    [Session1, Session2] = nuk_user_sessions:list().
+    Expected = lists:sort([Session1, Session2]),
+    Expected = lists:sort(nuk_user_sessions:list()).
 
 nuk_user_sessions_delete(_) ->
     ok = nuk_users:put(nuk_user:new("GoodUser1", "GoodPass1")),

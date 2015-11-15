@@ -61,5 +61,5 @@ nuk_games_list(_) ->
     Game2 = nuk_game:new("GoodGame2", nuk_game_bogus2),
     ok = nuk_games:register(Game1),
     ok = nuk_games:register(Game2),
-    %% TODO list doesn't have to be in same order
-    [Game1, Game2] = nuk_games:list().
+    Expected = lists:sort([Game1, Game2]),
+    Expected = lists:sort(nuk_games:list()).
