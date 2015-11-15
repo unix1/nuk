@@ -23,21 +23,21 @@
 start_link() ->
     gen_server:start_link(?MODULE, [], []).
 
-init([]) ->
-    {ok, 0}.
+init([GameName]) ->
+    {ok, #{session => nuk_game_session:new(GameName)}}.
 
 %%====================================================================
 %% API
 %%====================================================================
 
 %% create a new game session
-%% TODO move to init/1 - there's no need for a separate function
+%% TODO move to init/1 ?
 -spec create(UserSessionId :: string(), GameName :: string()) ->
     {ok, GameSessionId :: string()} |
     {error, invalid_user_session, Extra :: string()} |
     {error, invalid_game_name, Extra :: string()}.
 create(UserSessionId, GameName) ->
-    {ok, Pid} = supervisor:start_child(nuk_game_sup, []),
+    {ok, Pid} = supervisor:start_child(nuk_game_sup, [GameName]),
     gen_server:call(Pid, {initialize, UserSessionId, GameName}).
 
 %% start a game.
@@ -59,10 +59,15 @@ finish(Pid) ->
 %% Behavior callbacks
 %%====================================================================
 
-handle_call({initialize, _UserSessionId, _GameName}, _From, State) ->
-    %% TODO look up game engine based on name
-    %% TODO invoke game engine
-    {reply, ok, State};
+handle_call({initialize, _UserSessionId, _GameName}, _From,
+            #{session := GameSession} = State) ->
+    GameModule = get_game_engine_module(GameSession),
+    User = get_user(UserSessionId),
+    %% TODO support options?
+    GameState = GameModule:initialize(User, []),
+    GameSessionNew = nuk_game_session:set_game_state(GameSession, GameState),
+    StateNew = State#{session := GameSessionNew},
+    {reply, ok, StateNew};
 handle_call({start, _UserSessionId}, _From, State) ->
     %% TODO invoke game engine
     {reply, ok, State};
@@ -77,3 +82,16 @@ handle_info(_Msg, State) -> {noreply, State}.
 terminate(_Reason, _State) -> ok.
 
 code_change(_OldVersion, State, _Extra) -> {ok, State}.
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
+get_game_engine_module(GameSession) ->
+    Game = nuk_game_session:get_game(),
+    nuk_game:get_module(Game).
+
+%% TODO does this belong in this module?
+get_user(UserSessionId) ->
+    UserSession = nuk_sessions:get_session(UserSessionId),
+    nuk_sessions:get_user(UserSession).
