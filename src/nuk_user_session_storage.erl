@@ -1,3 +1,8 @@
+%%%-------------------------------------------------------------------
+%% @doc nuk user session storage
+%% @end
+%%%-------------------------------------------------------------------
+
 -module(nuk_user_session_storage).
 
 -callback get(SessionId :: string()) ->

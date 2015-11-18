@@ -1,3 +1,8 @@
+%%%-------------------------------------------------------------------
+%% @doc nuk game session storage
+%% @end
+%%%-------------------------------------------------------------------
+
 -module(nuk_game_session_storage).
 
 -callback get(SessionId :: string()) ->
