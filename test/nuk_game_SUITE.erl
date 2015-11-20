@@ -72,6 +72,9 @@ nuk_game_flow(_) ->
     ok = nuk_games:register(Game),
     % create and login user
     ok = nuk_users:put(nuk_user:new("User1", "Pass1")),
-    {ok, UserSessionId} = nuk_users:login("User1", "Pass1"),
-    {ok, GameSessionId} = nuk_games:create(UserSessionId, "Coin Flip"),
-    {error, user_already_joined, _} = nuk_games:join(GameSessionId, UserSessionId).
+    ok = nuk_users:put(nuk_user:new("User2", "Pass2")),
+    {ok, UserSessionId1} = nuk_users:login("User1", "Pass1"),
+    {ok, UserSessionId2} = nuk_users:login("User2", "Pass2"),
+    {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip"),
+    {error, user_already_joined, _} = nuk_games:join(GameSessionId, UserSessionId1),
+    {error, max_users_reached, _} = nuk_games:join(GameSessionId, UserSessionId2).
