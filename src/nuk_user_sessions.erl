@@ -9,7 +9,8 @@
 -export([get/1, delete/1, list/0]).
 
 -spec get(SessionId :: string()) ->
-    {ok, nuk_user_session:session()}.
+    {ok, nuk_user_session:session()} |
+    {error, user_session_not_found, Extra :: string()}.
 get(SessionId) ->
     nuk_user_session_store_server:get(SessionId).
 

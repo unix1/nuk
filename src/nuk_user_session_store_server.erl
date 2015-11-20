@@ -15,7 +15,8 @@
 %%====================================================================
 
 -spec get(SessionId :: string()) ->
-    {ok, nuk_user_session:session()}.
+    {ok, nuk_user_session:session()} |
+    {error, user_session_not_found, Extra :: string()}.
 get(SessionId) ->
     Pid = list_to_pid(SessionId),
     nuk_user_server:get_session(Pid).

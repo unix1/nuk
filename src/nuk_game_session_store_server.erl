@@ -8,7 +8,7 @@
 -behaviour(nuk_game_session_storage).
 
 %% API
--export([get/1, delete/1, list/0]).
+-export([get/1, get_pid/1, put/1, delete/1, list/0]).
 
 %%====================================================================
 %% API
@@ -19,6 +19,16 @@
 get(SessionId) ->
     Pid = list_to_pid(SessionId),
     nuk_game_server:get_session(Pid).
+
+-spec get_pid(SessionId :: string()) ->
+    {ok, pid()} |
+    {error, session_not_found, Extra :: string()}.
+get_pid(SessionId) ->
+    {ok, list_to_pid(SessionId)}.
+
+-spec put(Pid :: pid()) -> SessionId :: string().
+put(Pid) when is_pid(Pid) ->
+    pid_to_list(Pid).
 
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->

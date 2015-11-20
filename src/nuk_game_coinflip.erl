@@ -15,10 +15,10 @@ initialize(User, []) ->
     {ok, #{turn_number => 0, wins => 0, max_turns => 10, user => User}}.
 
 player_join(User, State) ->
-    % single player game, we dont' allow more players to join
+    % single player game, we don't allow more players to join
     case get_user(State) of
         User ->
-            {error, already_joined, "User already joined the game"};
+            {error, user_already_joined, "User already joined the game"};
         _ ->
             {error, max_users_reached, "This is a 1 player game"}
     end.

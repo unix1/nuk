@@ -13,7 +13,8 @@
 -export([
     nuk_games_register_get/1,
     nuk_games_unregister/1,
-    nuk_games_list/1
+    nuk_games_list/1,
+    nuk_game_flow/1
 ]).
 
 %%====================================================================
@@ -24,7 +25,8 @@ all() ->
     [
         nuk_games_register_get,
         nuk_games_unregister,
-        nuk_games_list
+        nuk_games_list,
+        nuk_game_flow
     ].
 
 init_per_suite(Config) ->
@@ -63,3 +65,13 @@ nuk_games_list(_) ->
     ok = nuk_games:register(Game2),
     Expected = lists:sort([Game1, Game2]),
     Expected = lists:sort(nuk_games:list()).
+
+nuk_game_flow(_) ->
+    % register game
+    Game = nuk_game:new("Coin Flip", nuk_game_coinflip),
+    ok = nuk_games:register(Game),
+    % create and login user
+    ok = nuk_users:put(nuk_user:new("User1", "Pass1")),
+    {ok, UserSessionId} = nuk_users:login("User1", "Pass1"),
+    {ok, GameSessionId} = nuk_games:create(UserSessionId, "Coin Flip"),
+    {error, user_already_joined, _} = nuk_games:join(GameSessionId, UserSessionId).

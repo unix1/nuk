@@ -6,7 +6,7 @@
 -module(nuk_game_session).
 
 %% API
--export([new/1, get_game_state/1, set_game_state/2]).
+-export([new/1, get_game/1, get_game_state/1, set_game_state/2]).
 -export_type([session/0]).
 
 -opaque session() :: #{game => nuk_game:game(),
@@ -20,6 +20,10 @@
 -spec new(Game :: nuk_game:game()) -> session().
 new(Game) ->
     #{game => Game, nuk_state => nil, game_state => nil}.
+
+-spec get_game(nuk_game_session:session()) -> nuk_game:game().
+get_game(#{game := Game}) ->
+    Game.
 
 -spec get_game_state(nuk_game_session:session()) -> term().
 get_game_state(#{game_state := GameState}) ->

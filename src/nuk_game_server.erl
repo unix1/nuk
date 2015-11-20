@@ -8,7 +8,7 @@
 -behaviour(gen_server).
 
 %% Supervision
--export([start_link/0, init/1]).
+-export([start_link/1, init/1]).
 
 %% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
@@ -20,11 +20,12 @@
 %% Supervision
 %%====================================================================
 
-start_link() ->
-    gen_server:start_link(?MODULE, [], []).
+start_link(GameName) ->
+    gen_server:start_link(?MODULE, [GameName], []).
 
 init([GameName]) ->
-    {ok, #{session => nuk_game_session:new(GameName)}}.
+    {ok, Game} = nuk_games:get(GameName),
+    {ok, #{session => nuk_game_session:new(Game)}}.
 
 %%====================================================================
 %% API
@@ -32,9 +33,10 @@ init([GameName]) ->
 
 %% create a new game session
 %% TODO move to init/1 ?
+%% TODO at least game module lookup, so it's stored in state
 -spec create(UserSessionId :: string(), GameName :: string()) ->
     {ok, GameSessionId :: string()} |
-    {error, invalid_user_session, Extra :: string()} |
+    {error, user_session_not_found, Extra :: string()} |
     {error, invalid_game_name, Extra :: string()}.
 create(UserSessionId, GameName) ->
     {ok, Pid} = supervisor:start_child(nuk_game_sup, [GameName]),
@@ -42,22 +44,22 @@ create(UserSessionId, GameName) ->
 
 -spec join(Pid :: pid(), UserSessionId :: string()) ->
     ok |
-    {error, already_joined, Extra :: string()} |
+    {error, user_already_joined, Extra :: string()} |
     {error, max_users_reached, Extra :: string()}.
-join (Pid, UserSessionId) ->
+join(Pid, UserSessionId) ->
     gen_server:call(Pid, {player_join, UserSessionId}).
 
 -spec leave(Pid :: pid(), UserSessionId :: string()) ->
     ok |
     {error, unknown_user, Extra :: string()}.
-leave (Pid, UserSessionId) ->
+leave(Pid, UserSessionId) ->
     gen_server:call(Pid, {player_leave, UserSessionId}).
 
 %% start a game.
 -spec start(Pid :: pid(), UserSessionId :: string()) ->
     ok |
-    {error, invalid_game_session, Extra :: string()} |
-    {error, invalid_user_session, Extra :: string()} |
+    {error, game_session_not_found, Extra :: string()} |
+    {error, user_session_not_found, Extra :: string()} |
     {error, game_engine_error, Extra :: string()}.
 start(Pid, UserSessionId) ->
     gen_server:call(Pid, {start, UserSessionId}).
@@ -75,15 +77,33 @@ finish(Pid) ->
 handle_call({initialize, UserSessionId}, _From,
             #{session := GameSession} = State) ->
     GameModule = get_game_engine_module(GameSession),
-    User = get_user(UserSessionId),
-    %% TODO support options?
-    GameState = GameModule:initialize(User, []),
-    GameSessionNew = nuk_game_session:set_game_state(GameSession, GameState),
-    StateNew = State#{session := GameSessionNew},
-    {reply, ok, StateNew};
-handle_call({player_join, _UserSessionId}, _From, State) ->
+    case get_user(UserSessionId) of
+        {error, user_session_not_found, Reason} ->
+            {reply, {error, user_session_not_found, Reason}, State};
+        {ok, User} ->
+            %% TODO support options?
+            {ok, GameState} = GameModule:initialize(User, []),
+            GameSessionNew = nuk_game_session:set_game_state(GameSession, GameState),
+            StateNew = State#{session := GameSessionNew},
+            GameSessionId = nuk_game_sessions:put(self()),
+            {reply, {ok, GameSessionId}, StateNew}
+    end;
+handle_call({player_join, UserSessionId}, _From, #{session := GameSession} = State) ->
     %% TODO invoke game engine
-    {reply, ok, State};
+    case get_user(UserSessionId) of
+        {error, user_session_not_found, Reason} ->
+            {reply, {error, user_session_not_found, Reason}, State};
+        {ok, User} ->
+            GameModule = get_game_engine_module(GameSession),
+            GameState = nuk_game_session:get_game_state(GameSession),
+            case GameModule:player_join(User, GameState) of
+                {error, ErrorCode, Reason} ->
+                    {reply, {error, ErrorCode, Reason}, State};
+                {ok, GameStateNew} ->
+                    StateNew = nuk_game_session:set_game_state(GameSession, GameStateNew),
+                    {reply, ok, StateNew}
+            end
+    end;
 handle_call({player_leave, _UserSessionId}, _From, State) ->
     %% TODO invoke game engine
     {reply, ok, State};
@@ -112,5 +132,9 @@ get_game_engine_module(GameSession) ->
 
 %% TODO does this belong in this module?
 get_user(UserSessionId) ->
-    UserSession = nuk_sessions:get_session(UserSessionId),
-    nuk_sessions:get_user(UserSession).
+    case nuk_user_sessions:get(UserSessionId) of
+        {error, user_session_not_found, Reason} ->
+            {error, user_session_not_found, Reason};
+        {ok, UserSession} ->
+            {ok, nuk_user_session:get_user(UserSession)}
+    end.
