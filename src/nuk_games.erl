@@ -7,7 +7,7 @@
 
 %% API
 -export([register/1, unregister/1, get/1, list/0]).
--export([create/2, join/2]).
+-export([create/2, join/2, get_game_state/1]).
 
 %%====================================================================
 %% Game registration
@@ -54,4 +54,15 @@ join(GameSessionId, UserSessionId) ->
             {error, game_session_not_found, Reason};
         {ok, GamePid} ->
             nuk_game_server:join(GamePid, UserSessionId)
+    end.
+
+- spec get_game_state(GameSessionId :: string()) ->
+    {error, game_session_not_found, Extra :: string()} |
+    term().
+get_game_state(GameSessionId) ->
+    case nuk_game_sessions:get_pid(GameSessionId) of
+        {error, game_session_not_found, Reason} ->
+            {error, game_session_not_found, Reason};
+        {ok, GamePid} ->
+            nuk_game_server:get_game_state(GamePid)
     end.

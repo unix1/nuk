@@ -12,43 +12,40 @@
 %% TODO errors should probably also return state
 
 initialize(User, []) ->
-    {ok, #{turn_number => 0, wins => 0, max_turns => 10, user => User}}.
+    {ok, #{turn_number => 0, wins => 0, max_turns => 3, user => User}}.
 
-player_join(User, State) ->
+player_join(User, #{user := User}) ->
+    {error, user_already_joined, "User already joined the game"};
+player_join(_User, _State) ->
     % single player game, we don't allow more players to join
-    case get_user(State) of
-        User ->
-            {error, user_already_joined, "User already joined the game"};
-        _ ->
-            {error, max_users_reached, "This is a 1 player game"}
-    end.
+    {error, max_users_reached, "This is a 1 player game"}.
 
-player_leave(User, State) ->
-    case get_user(State) of
-        User ->
-            {ok, complete, [], [], State};
-        _ ->
-            {error, unknown_user, "Couldn't leave because user was not found"}
-    end.
+player_leave(User, #{user := User} = State) ->
+    % player leaves before the game is over
+    {ok, complete, [], [], State}.
 
-start(State) ->
-    {ok, await_turn, [get_user(State)], State}.
+start(#{user := User} = State) ->
+    {ok, await_turn, [User], State}.
 
-turn(_User, Turn, State) when Turn =:= heads; Turn =:= tails ->
-    NewTurnNumber = get_turn_number(State) + 1,
-    MaxTurns = get_max_turns(State),
-    case NewTurnNumber of
+turn(User, Turn, #{turn_number := TurnNumber,
+                   wins := Wins,
+                   losses := Losses,
+                   max_turns := MaxTurns,
+                   user := User} = State) when Turn =:= heads; Turn =:= tails ->
+    case TurnNumber of
         MaxTurns ->
-            WinsNumber = get_wins(State),
             if
-                WinsNumber > MaxTurns / 2 ->
-                    {ok, complete, [get_user(State)], [], "Game over. You win."};
+                Wins > MaxTurns / 2 ->
+                    {ok, complete, [User], [], "Game over. You win."};
                 true ->
-                    {ok, complete, [], [get_user(State)], "Game over. You lose."}
+                    {ok, complete, [], [User], "Game over. You lose."}
             end;
         _ ->
-            NewState = State#{turn_number := NewTurnNumber},
-            {ok, await_turn, [get_user(State)], NewState}
+            [Win, Loss] = process_turn(Turn),
+            NewState = State#{turn_number := TurnNumber + 1,
+                              wins := Wins + Win,
+                              losses := Losses + Loss},
+            {ok, await_turn, [User], NewState}
     end;
 turn(_User, _Turn, _State) ->
     {error, invalid_turn, "Invalid turn"}.
@@ -60,14 +57,14 @@ finish(_State) ->
 %% Internal functions
 %%====================================================================
 
-get_user(#{user := User}) ->
-    User.
+process_turn(Turn) when Turn =:= heads; Turn =:= tails ->
+    Toss = rand:uniform(2),
+    case turn_to_number(Turn) of
+        Toss ->
+            [1, 0];
+        _ ->
+            [0, 1]
+    end.
 
-get_turn_number(#{turn_number := TurnNumber}) ->
-    TurnNumber.
-
-get_max_turns(#{max_turns := MaxTurns}) ->
-    MaxTurns.
-
-get_wins(#{wins := Wins}) ->
-    Wins.
+turn_to_number(Turn) when Turn =:= heads -> 1;
+turn_to_number(Turn) when Turn =:= tails -> 2.

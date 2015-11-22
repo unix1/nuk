@@ -14,7 +14,7 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([create/2, start/2, join/2, leave/2, finish/1]).
+-export([create/2, start/2, join/2, leave/2, get_game_state/1, finish/1]).
 
 %%====================================================================
 %% Supervision
@@ -64,6 +64,10 @@ leave(Pid, UserSessionId) ->
 start(Pid, UserSessionId) ->
     gen_server:call(Pid, {start, UserSessionId}).
 
+-spec get_game_state(Pid :: pid) -> term().
+get_game_state(Pid) ->
+    gen_server:call(Pid, {get_game_state}).
+
 %% end a game
 %% TODO figure out finish
 -spec finish(Pid :: pid()) -> ok.
@@ -110,6 +114,9 @@ handle_call({player_leave, _UserSessionId}, _From, State) ->
 handle_call({start, _UserSessionId}, _From, State) ->
     %% TODO invoke game engine
     {reply, ok, State};
+handle_call({get_game_state}, _From, #{session := GameSession} = State) ->
+    GameState = nuk_game_session:get_game_state(GameSession),
+    {reply, GameState, State};
 handle_call({finish}, _From, State) ->
     %% TODO invoke game engine
     {reply, ok, State}.

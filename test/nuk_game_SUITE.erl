@@ -71,10 +71,14 @@ nuk_game_flow(_) ->
     Game = nuk_game:new("Coin Flip", nuk_game_coinflip),
     ok = nuk_games:register(Game),
     % create and login user
-    ok = nuk_users:put(nuk_user:new("User1", "Pass1")),
-    ok = nuk_users:put(nuk_user:new("User2", "Pass2")),
+    User1 = nuk_user:new("User1", "Pass1"),
+    User2 = nuk_user:new("User2", "Pass2"),
+    ok = nuk_users:put(User1),
+    ok = nuk_users:put(User2),
     {ok, UserSessionId1} = nuk_users:login("User1", "Pass1"),
     {ok, UserSessionId2} = nuk_users:login("User2", "Pass2"),
     {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip"),
     {error, user_already_joined, _} = nuk_games:join(GameSessionId, UserSessionId1),
-    {error, max_users_reached, _} = nuk_games:join(GameSessionId, UserSessionId2).
+    {error, max_users_reached, _} = nuk_games:join(GameSessionId, UserSessionId2),
+    ExpectedGameState = #{turn_number => 0, wins => 0, max_turns => 3, user => User1},
+    ExpectedGameState = nuk_games:get_game_state(GameSessionId).
