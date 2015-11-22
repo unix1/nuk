@@ -32,19 +32,22 @@ turn(User, Turn, #{turn_number := TurnNumber,
                    losses := Losses,
                    max_turns := MaxTurns,
                    user := User} = State) when Turn =:= heads; Turn =:= tails ->
-    case TurnNumber of
+    NewTurnNumber = TurnNumber + 1,
+    [Win, Loss] = process_turn(Turn),
+    NewWins = Wins + Win,
+    NewLosses = Losses + Loss,
+    NewState = State#{turn_number := NewTurnNumber,
+                      wins := NewWins,
+                      losses := NewLosses},
+    case NewTurnNumber of
         MaxTurns ->
             if
-                Wins > MaxTurns / 2 ->
+                NewWins > MaxTurns / 2 ->
                     {ok, complete, [User], [], "Game over. You win."};
                 true ->
                     {ok, complete, [], [User], "Game over. You lose."}
             end;
         _ ->
-            [Win, Loss] = process_turn(Turn),
-            NewState = State#{turn_number := TurnNumber + 1,
-                              wins := Wins + Win,
-                              losses := Losses + Loss},
             {ok, await_turn, [User], NewState}
     end;
 turn(_User, _Turn, _State) ->
