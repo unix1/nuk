@@ -15,6 +15,7 @@ initialize(User, []) ->
     {ok, #{turn_number => 0, wins => 0, max_turns => 3, user => User}}.
 
 player_join(User, #{user := User}) ->
+    %% TODO move this error check to nuk_game_server
     {error, user_already_joined, "User already joined the game"};
 player_join(_User, _State) ->
     % single player game, we don't allow more players to join

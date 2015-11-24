@@ -6,13 +6,24 @@
 -module(nuk_user_sessions).
 
 %% API
--export([get/1, delete/1, list/0]).
+-export([get/1, get_user/1, delete/1, list/0]).
 
 -spec get(SessionId :: string()) ->
     {ok, nuk_user_session:session()} |
     {error, user_session_not_found, Extra :: string()}.
 get(SessionId) ->
     nuk_user_session_store_server:get(SessionId).
+
+-spec get_user(SessionId :: string()) ->
+    {ok, nuk_user:user()} |
+    {error, user_session_not_found, Extra :: string()}.
+get_user(SessionId) ->
+    case nuk_user_sessions:get(SessionId) of
+        {ok, Session} ->
+            {ok, nuk_user_session:get_user(Session)};
+        {error, user_session_not_found, Reason} ->
+            {error, user_session_not_found, Reason}
+    end.
 
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
