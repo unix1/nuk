@@ -11,8 +11,7 @@
 
 -callback player_join(Player :: nuk_user:user(), EngineState :: term()) ->
     {ok, NewEngineState :: term()} |
-    {error, already_joined, Extra :: string()} |
-    {error, max_users_reached, Extra :: string()}.
+    {error, ErrorCode :: atom(), Extra :: string()}.
 
 -callback player_leave(Player :: nuk_user:user(), EngineState :: term()) ->
     {ok, NewEngineState :: term()} |

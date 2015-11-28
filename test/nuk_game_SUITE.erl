@@ -48,19 +48,19 @@ end_per_testcase(_, _Config) ->
 %%====================================================================
 
 nuk_games_register_get(_) ->
-    Game1 = nuk_game:new("GoodGame1", nuk_game_bogus1),
+    Game1 = nuk_game:new("GoodGame1", nuk_game_bogus1, 1, 1),
     ok = nuk_games:register(Game1),
     {error, game_not_found, _} = nuk_games:get("BadGame"),
     {ok, Game1} = nuk_games:get("GoodGame1").
 
 nuk_games_unregister(_) ->
-    ok = nuk_games:register(nuk_game:new("GoodGame1", nuk_game_bogus1)),
+    ok = nuk_games:register(nuk_game:new("GoodGame1", nuk_game_bogus1, 1, 1)),
     ok = nuk_games:unregister("GoodGame1"),
     {error, game_not_found, _} = nuk_games:get("GoodGame1").
 
 nuk_games_list(_) ->
-    Game1 = nuk_game:new("GoodGame1", nuk_game_bogus1),
-    Game2 = nuk_game:new("GoodGame2", nuk_game_bogus2),
+    Game1 = nuk_game:new("GoodGame1", nuk_game_bogus1, 1, 1),
+    Game2 = nuk_game:new("GoodGame2", nuk_game_bogus2, 1, 1),
     ok = nuk_games:register(Game1),
     ok = nuk_games:register(Game2),
     Expected = lists:sort([Game1, Game2]),
@@ -68,7 +68,7 @@ nuk_games_list(_) ->
 
 nuk_game_flow(_) ->
     % register game
-    Game = nuk_game:new("Coin Flip", nuk_game_coinflip),
+    Game = nuk_game:new("Coin Flip", nuk_game_coinflip, 1, 1),
     ok = nuk_games:register(Game),
     % create and login user
     User1 = nuk_user:new("User1", "Pass1"),

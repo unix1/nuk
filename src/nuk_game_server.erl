@@ -7,14 +7,20 @@
 
 -behaviour(gen_server).
 
+%% API
+-export([create/2]).
+-export([start/2]).
+-export([join/2]).
+-export([leave/2]).
+-export([get_game_state/1]).
+-export([turn/3]).
+-export([finish/1]).
+
 %% Supervision
 -export([start_link/1, init/1]).
 
 %% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
-
-%% API
--export([create/2, start/2, join/2, leave/2, get_game_state/1, turn/3, finish/1]).
 
 %%====================================================================
 %% Supervision
@@ -32,13 +38,13 @@ init([GameName]) ->
 %%====================================================================
 
 %% create a new game session
-%% TODO move to init/1 ?
-%% TODO at least game module lookup, so it's stored in state
 -spec create(User :: nuk_user:user(), GameName :: string()) ->
     {ok, GameSessionId :: string()} |
     {error, invalid_game_name, Extra :: string()}.
 create(User, GameName) ->
     {ok, Pid} = supervisor:start_child(nuk_game_sup, [GameName]),
+    %% TODO move to init/1 ?
+    %% TODO at least game module lookup, so it's stored in state
     gen_server:call(Pid, {initialize, User}).
 
 -spec join(Pid :: pid(), User :: nuk_user:user()) ->
@@ -99,17 +105,22 @@ handle_call({initialize, User}, _From,
     GameSessionId = nuk_game_sessions:put(self()),
     {reply, {ok, GameSessionId}, StateNew};
 handle_call({player_join, User}, _From, #{session := GameSession} = State) ->
-    %% TODO invoke game engine
     GameModule = get_game_engine_module(GameSession),
     GameState = nuk_game_session:get_game_state(GameSession),
-    case GameModule:player_join(User, GameState) of
+    case check_user_can_join(GameSession, User) of
         {error, ErrorCode, Reason} ->
             {reply, {error, ErrorCode, Reason}, State};
-        {ok, GameStateNew} ->
-            %% TODO add player to nuk_state instead of game_state
-            GameSessionNew = nuk_game_session:set_game_state(GameSession, GameStateNew),
-            StateNew = State#{session := GameSessionNew},
-            {reply, ok, StateNew}
+        ok ->
+            case GameModule:player_join(User, GameState) of
+                {error, ErrorCode, Reason} ->
+                    {reply, {error, ErrorCode, Reason}, State};
+                {ok, GameStateNew} ->
+                    GameSession1 = nuk_game_session:set_game_state(GameSession,
+                                                                   GameStateNew),
+                    GameSession2 = nuk_game_session:add_player(GameSession1, User),
+                    StateNew = State#{session := GameSession2},
+                    {reply, ok, StateNew}
+            end
     end;
 handle_call({player_leave, _User}, _From, State) ->
     %% TODO invoke game engine
@@ -154,6 +165,32 @@ code_change(_OldVersion, State, _Extra) -> {ok, State}.
 %% Internal functions
 %%====================================================================
 
+-spec get_game_engine_module(GameSession :: nuk_game_session:session()) -> atom().
 get_game_engine_module(GameSession) ->
     Game = nuk_game_session:get_game(GameSession),
     nuk_game:get_module(Game).
+
+-spec get_max_players(GameSession :: nuk_game_session:session()) -> integer().
+get_max_players(GameSession) ->
+    Game = nuk_game_session:get_game(GameSession),
+    nuk_game:get_max_players(Game).
+
+-spec check_user_can_join(GameSession :: nuk_game_session:session(),
+                          User :: nuk_user:user()) ->
+    ok |
+    {error, user_already_joined, Extra :: string()} |
+    {error, max_users_reached, Extra :: string()}.
+check_user_can_join(GameSession, User) ->
+    case nuk_game_session:has_player(GameSession, User) of
+        true ->
+            {error, user_already_joined, "User already joined the game"};
+        false ->
+            MaxPlayers = get_max_players(GameSession),
+            CurrentPlayersCcount = nuk_game_session:get_players_count(GameSession),
+            if
+                CurrentPlayersCcount < MaxPlayers ->
+                    ok;
+                true ->
+                    {error, max_users_reached, "Maximum number of users reached"}
+            end
+    end.
