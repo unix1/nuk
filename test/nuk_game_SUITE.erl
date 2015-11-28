@@ -77,8 +77,11 @@ nuk_game_flow(_) ->
     ok = nuk_users:put(User2),
     {ok, UserSessionId1} = nuk_users:login("User1", "Pass1"),
     {ok, UserSessionId2} = nuk_users:login("User2", "Pass2"),
+    % create a game and join players
     {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip"),
     {error, user_already_joined, _} = nuk_games:join(GameSessionId, UserSessionId1),
     {error, max_users_reached, _} = nuk_games:join(GameSessionId, UserSessionId2),
+    {error, game_session_not_found, _} = nuk_games:get_game_session("foobar"),
+    {ok, GameSession} = nuk_games:get_game_session(GameSessionId),
     ExpectedGameState = #{turn_number => 0, wins => 0, max_turns => 3, user => User1},
-    ExpectedGameState = nuk_games:get_game_state(GameSessionId).
+    ExpectedGameState = nuk_game_session:get_game_state(GameSession).

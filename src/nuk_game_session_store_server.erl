@@ -22,9 +22,13 @@ get(SessionId) ->
 
 -spec get_pid(SessionId :: string()) ->
     {ok, pid()} |
-    {error, session_not_found, Extra :: string()}.
+    {error, game_session_not_found, Extra :: string()}.
 get_pid(SessionId) ->
-    {ok, list_to_pid(SessionId)}.
+    try list_to_pid(SessionId) of
+        Pid -> {ok, Pid}
+    catch
+        error:badarg -> {error, game_session_not_found, SessionId}
+    end.
 
 -spec put(Pid :: pid()) -> SessionId :: string().
 put(Pid) when is_pid(Pid) ->

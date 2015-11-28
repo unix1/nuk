@@ -12,7 +12,7 @@
 -export([start/2]).
 -export([join/2]).
 -export([leave/2]).
--export([get_game_state/1]).
+-export([get_session/1]).
 -export([turn/3]).
 -export([finish/1]).
 
@@ -69,10 +69,10 @@ leave(Pid, UserSessionId) ->
 start(Pid, UserSessionId) ->
     gen_server:call(Pid, {start, UserSessionId}).
 
-%% get game status
--spec get_game_state(Pid :: pid) -> term().
-get_game_state(Pid) ->
-    gen_server:call(Pid, {get_game_state}).
+%% get game session
+-spec get_session(Pid :: pid) -> term().
+get_session(Pid) ->
+    gen_server:call(Pid, {get_session}).
 
 %% process player's turn
 -spec turn(Pid :: pid(), User :: nuk_user:user(), Turn :: term()) ->
@@ -128,9 +128,8 @@ handle_call({player_leave, _User}, _From, State) ->
 handle_call({start, _User}, _From, State) ->
     %% TODO invoke game engine
     {reply, ok, State};
-handle_call({get_game_state}, _From, #{session := GameSession} = State) ->
-    GameState = nuk_game_session:get_game_state(GameSession),
-    {reply, GameState, State};
+handle_call({get_session}, _From, #{session := GameSession} = State) ->
+    {reply, GameSession, State};
 handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
     GameModule = get_game_engine_module(GameSession),
     GameState = nuk_game_session:get_game_state(GameSession),
