@@ -17,6 +17,7 @@
 -export([set_players/2]).
 -export([set_players_turn/2]).
 -export([set_status/2]).
+-export([set_winners_losers/3]).
 
 %% Types
 -export_type([session/0]).
@@ -98,6 +99,14 @@ set_players_turn(Session, Players) when is_list(Players) ->
 set_status(Session, Status) when is_atom(Status) ->
     NukState = get_state(Session),
     Session#{nuk_state := NukState#{status := Status}}.
+
+-spec set_winners_losers(Session :: session(),
+                  Winners :: [nuk_user:user()],
+                  Losers :: [nuk_user:user()]) -> session().
+set_winners_losers(Session, Winners, Losers) ->
+    NukState = get_state(Session),
+    Session#{nuk_state := NukState#{players_winners := Winners,
+                                    players_losers := Losers}}.
 
 %%====================================================================
 %% Internal functions
