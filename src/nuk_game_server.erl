@@ -136,11 +136,12 @@ handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
     case GameModule:turn(User, Turn, GameState) of
         {error, ErrorCode, Reason} ->
             {error, ErrorCode, Reason};
-        {ok, await_turn, _NextTurnPlayers, GameState} ->
-            %% TODO make use of next turn players
+        {ok, await_turn, NextTurnPlayers, GameState} ->
             GameSession1 = nuk_game_session:set_game_state(GameSession, GameState),
             GameSession2 = nuk_game_session:set_status(GameSession1, await_turn),
-            StateNew = State#{session := GameSession2},
+            GameSession3 = nuk_game_session:set_players_turn(GameSession2,
+                                                             NextTurnPlayers),
+            StateNew = State#{session := GameSession3},
             {reply, ok, StateNew};
         {ok, complete, _Winners, _Losers, _Extra} ->
             %% TODO set winners, losers, extra

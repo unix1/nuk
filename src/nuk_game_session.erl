@@ -15,6 +15,7 @@
 -export([set_game_state/2]).
 -export([add_player/2]).
 -export([set_players/2]).
+-export([set_players_turn/2]).
 -export([set_status/2]).
 
 %% Types
@@ -87,6 +88,11 @@ add_player(Session, Player) ->
 set_players(Session, Players) when is_list(Players) ->
     NukState = get_state(Session),
     Session#{nuk_state := NukState#{players := Players}}.
+
+-spec set_players_turn(Session :: session(), Players :: [nuk_user:user()]) -> session().
+set_players_turn(Session, Players) when is_list(Players) ->
+    NukState = get_state(Session),
+    Session#{nuk_state := NukState#{players_turn := Players}}.
 
 -spec set_status(Session:: session(), Status :: atom()) -> session().
 set_status(Session, Status) when is_atom(Status) ->
