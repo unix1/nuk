@@ -126,6 +126,7 @@ handle_call({player_leave, _User}, _From, State) ->
     %% TODO invoke game engine
     {reply, ok, State};
 handle_call({start, _User}, _From, State) ->
+    %% TODO check min players is met
     %% TODO invoke game engine
     {reply, ok, State};
 handle_call({get_session}, _From, #{session := GameSession} = State) ->

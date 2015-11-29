@@ -6,8 +6,17 @@
 -module(nuk_games).
 
 %% API
--export([register/1, unregister/1, get/1, list/0]).
--export([create/2, join/2, get_game_session/1, turn/3]).
+
+% Game registration
+-export([register/1]).
+-export([unregister/1]).
+-export([get/1, list/0]).
+
+% Game flow
+-export([create/2]).
+-export([join/2]).
+-export([get_game_session/1]).
+-export([turn/3]).
 
 %%====================================================================
 %% Game registration
