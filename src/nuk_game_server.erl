@@ -143,8 +143,7 @@ handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
                                                              NextTurnPlayers),
             StateNew = State#{session := GameSession3},
             {reply, ok, StateNew};
-        {ok, complete, Winners, Losers, _Extra} ->
-            %% TODO set Extra somewhere
+        {ok, complete, Winners, Losers} ->
             GameSession1 = nuk_game_session:set_status(GameSession, complete),
             GameSession2 = nuk_game_session:set_winners_losers(GameSession1,
                                                                Winners,
