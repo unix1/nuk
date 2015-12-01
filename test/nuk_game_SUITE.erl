@@ -90,4 +90,9 @@ nuk_game_flow(_) ->
     ExpectedGameState = nuk_game_session:get_game_state(GameSession),
     [User1] = nuk_game_session:get_players(GameSession),
     1 = nuk_game_session:get_players_count(GameSession),
-    true = nuk_game_session:has_player(GameSession, User1).
+    true = nuk_game_session:has_player(GameSession, User1),
+    false = nuk_game_session:has_player(GameSession, User2),
+    initialized = nuk_game_session:get_status(GameSession),
+    0 = nuk_game_session:get_turn_number(GameSession),
+    [] = nuk_game_session:get_players_turn(GameSession),
+    {[], []} = nuk_game_session:get_winners_losers(GameSession).

@@ -14,6 +14,7 @@
 -export([get_players_turn/1]).
 -export([get_status/1]).
 -export([get_turn_number/1]).
+-export([get_winners_losers/1]).
 -export([has_player/2]).
 -export([increment_turn_number/1]).
 -export([set_game_state/2]).
@@ -89,6 +90,13 @@ get_turn_number(Session) ->
     NukState = get_state(Session),
     #{turn_number := TurnNumber} = NukState,
     TurnNumber.
+
+-spec get_winners_losers(Session :: session()) ->
+    {Winners :: [nuk_user:user()], Losers :: [nuk_user:user()]}.
+get_winners_losers(Session) ->
+    NukState = get_state(Session),
+    #{players_winners := Winners, players_losers := Losers} = NukState,
+    {Winners, Losers}.
 
 -spec has_player(Session :: session(), Player :: nuk_user:user()) ->
     true |
