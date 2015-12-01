@@ -18,8 +18,11 @@
     {ok, nuk_user_session:session()} |
     {error, user_session_not_found, Extra :: string()}.
 get(SessionId) ->
-    Pid = list_to_pid(SessionId),
-    nuk_user_server:get_session(Pid).
+    try list_to_pid(SessionId) of
+        Pid -> nuk_user_server:get_session(Pid)
+    catch
+        error:badarg -> {error, user_session_not_found, SessionId}
+    end.
 
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
