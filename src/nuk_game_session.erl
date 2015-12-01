@@ -11,12 +11,17 @@
 -export([get_game_state/1]).
 -export([get_players/1]).
 -export([get_players_count/1]).
+-export([get_players_turn/1]).
+-export([get_status/1]).
+-export([get_turn_number/1]).
 -export([has_player/2]).
+-export([increment_turn_number/1]).
 -export([set_game_state/2]).
 -export([add_player/2]).
 -export([set_players/2]).
 -export([set_players_turn/2]).
 -export([set_status/2]).
+-export([set_turn_number/2]).
 -export([set_winners_losers/3]).
 
 %% Types
@@ -67,6 +72,24 @@ get_players(Session) ->
 get_players_count(Session) ->
     length(get_players(Session)).
 
+-spec get_players_turn(Session :: session()) -> [nuk_user:user()].
+get_players_turn(Session) ->
+    NukState = get_state(Session),
+    #{players_turn := PlayersTurn} = NukState,
+    PlayersTurn.
+
+-spec get_status(Session :: session()) -> atom().
+get_status(Session) ->
+    NukState = get_state(Session),
+    #{status := Status} = NukState,
+    Status.
+
+-spec get_turn_number(Session :: session()) -> integer().
+get_turn_number(Session) ->
+    NukState = get_state(Session),
+    #{turn_number := TurnNumber} = NukState,
+    TurnNumber.
+
 -spec has_player(Session :: session(), Player :: nuk_user:user()) ->
     true |
     false.
@@ -74,6 +97,11 @@ has_player(Session, Player) ->
     Players = get_players(Session),
     %% TODO should this check by username instead?
     lists:member(Player, Players).
+
+-spec increment_turn_number(Session :: session()) -> session().
+increment_turn_number(Session) ->
+    TurnNumberNew = get_turn_number(Session) + 1,
+    set_turn_number(Session, TurnNumberNew).
 
 -spec set_game_state(Session :: session(), GameState :: term()) -> session().
 set_game_state(Session, GameState) ->
@@ -99,6 +127,11 @@ set_players_turn(Session, Players) when is_list(Players) ->
 set_status(Session, Status) when is_atom(Status) ->
     NukState = get_state(Session),
     Session#{nuk_state := NukState#{status := Status}}.
+
+-spec set_turn_number(Session:: session(), TurnNumber :: integer()) -> session().
+set_turn_number(Session, TurnNumber) when is_integer(TurnNumber) ->
+    NukState = get_state(Session),
+    Session#{nuk_state := NukState#{turn_number := TurnNumber}}.
 
 -spec set_winners_losers(Session :: session(),
                   Winners :: [nuk_user:user()],
