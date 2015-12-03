@@ -86,8 +86,8 @@ start(GameSessionId, UserSessionId) ->
     end.
 
 -spec get_game_session(GameSessionId :: string()) ->
-    {error, game_session_not_found, Extra :: string()} |
-    {ok, nuk_game_session:session()}.
+    {ok, nuk_game_session:session()} |
+    {error, game_session_not_found, Extra :: string()}.
 get_game_session(GameSessionId) ->
     case nuk_game_sessions:get_pid(GameSessionId) of
         {error, game_session_not_found, Reason} ->

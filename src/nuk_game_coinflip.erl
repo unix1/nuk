@@ -12,7 +12,7 @@
 %% TODO errors should probably also return state
 
 initialize(User, []) ->
-    {ok, #{turn_number => 0, wins => 0, max_turns => 3, user => User}}.
+    {ok, #{turn_number => 0, wins => 0, losses => 0, max_turns => 3, user => User}}.
 
 player_join(_User, State) -> {ok, State}.
 

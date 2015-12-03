@@ -16,6 +16,7 @@
 -export([get_turn_number/1]).
 -export([get_winners_losers/1]).
 -export([has_player/2]).
+-export([is_players_turn/2]).
 -export([increment_turn_number/1]).
 -export([set_game_state/2]).
 -export([add_player/2]).
@@ -103,6 +104,14 @@ get_winners_losers(Session) ->
     false.
 has_player(Session, Player) ->
     Players = get_players(Session),
+    %% TODO should this check by username instead?
+    lists:member(Player, Players).
+
+-spec is_players_turn(Session :: session(), Player :: nuk_user:user()) ->
+    true |
+    false.
+is_players_turn(Session, Player) ->
+    Players = get_players_turn(Session),
     %% TODO should this check by username instead?
     lists:member(Player, Players).
 

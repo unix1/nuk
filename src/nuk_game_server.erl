@@ -143,25 +143,32 @@ handle_call({get_session}, _From, #{session := GameSession} = State) ->
 handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
     GameModule = get_game_engine_module(GameSession),
     GameState = nuk_game_session:get_game_state(GameSession),
-    case GameModule:turn(User, Turn, GameState) of
+    case check_user_can_turn(GameSession, User) of
         {error, ErrorCode, Reason} ->
-            {error, ErrorCode, Reason};
-        {ok, await_turn, NextTurnPlayers, GameStateNew} ->
-            GameSession1 = nuk_game_session:set_game_state(GameSession, GameStateNew),
-            GameSession2 = nuk_game_session:set_status(GameSession1, await_turn),
-            GameSession3 = nuk_game_session:set_players_turn(GameSession2,
-                                                             NextTurnPlayers),
-            GameSession4 = nuk_game_session:increment_turn_number(GameSession3),
-            StateNew = State#{session := GameSession4},
-            {reply, ok, StateNew};
-        {ok, complete, Winners, Losers} ->
-            GameSession1 = nuk_game_session:set_status(GameSession, complete),
-            GameSession2 = nuk_game_session:set_winners_losers(GameSession1,
-                                                               Winners,
-                                                               Losers),
-            GameSession3 = nuk_game_session:increment_turn_number(GameSession2),
-            StateNew = State#{session := GameSession3},
-            {reply, ok, StateNew}
+            {reply, {error, ErrorCode, Reason}, State};
+        ok ->
+            case GameModule:turn(User, Turn, GameState) of
+                {error, ErrorCode, Reason} ->
+                    {reply, {error, ErrorCode, Reason}, State};
+                {ok, await_turn, NextTurnPlayers, GameStateNew} ->
+                    GameSession1 = nuk_game_session:set_game_state(GameSession,
+                                                                   GameStateNew),
+                    GameSession2 = nuk_game_session:set_status(GameSession1,
+                                                               await_turn),
+                    GameSession3 = nuk_game_session:set_players_turn(GameSession2,
+                                                                     NextTurnPlayers),
+                    GameSession4 = nuk_game_session:increment_turn_number(GameSession3),
+                    StateNew = State#{session := GameSession4},
+                    {reply, ok, StateNew};
+                {ok, complete, Winners, Losers} ->
+                    GameSession1 = nuk_game_session:set_status(GameSession, complete),
+                    GameSession2 = nuk_game_session:set_winners_losers(GameSession1,
+                                                                       Winners,
+                                                                       Losers),
+                    GameSession3 = nuk_game_session:increment_turn_number(GameSession2),
+                    StateNew = State#{session := GameSession3},
+                    {reply, ok, StateNew}
+            end
     end;
 handle_call({finish}, _From, State) ->
     %% TODO invoke game engine
@@ -200,9 +207,9 @@ check_user_can_join(GameSession, User) ->
             {error, user_already_joined, "User already joined the game"};
         false ->
             MaxPlayers = get_max_players(GameSession),
-            CurrentPlayersCcount = nuk_game_session:get_players_count(GameSession),
+            CurrentPlayersCount = nuk_game_session:get_players_count(GameSession),
             if
-                CurrentPlayersCcount < MaxPlayers ->
+                CurrentPlayersCount < MaxPlayers ->
                     ok;
                 true ->
                     {error, max_users_reached, "Maximum number of users reached"}
@@ -214,9 +221,34 @@ check_user_can_join(GameSession, User) ->
     ok |
     {error, user_not_in_game, Extra :: string()}.
 check_user_can_start(GameSession, User) ->
+    check_user_can_act(GameSession, User).
+
+-spec check_user_can_turn(GameSession :: nuk_game_session:session(),
+                          User :: nuk_user:user()) ->
+    ok |
+    {error, user_not_in_game, Extra :: string()} |
+    {error, bad_turn_order, Extra :: string()}.
+check_user_can_turn(GameSession, User) ->
+    case check_user_can_act(GameSession, User) of
+        {error, user_not_in_game, Reason} ->
+            {error, user_not_in_game, Reason};
+        ok ->
+            case nuk_game_session:is_players_turn(GameSession, User) of
+                false ->
+                    {error, bad_turn_order, "It is not your turn"};
+                true ->
+                    ok
+            end
+    end.
+
+-spec check_user_can_act(GameSession :: nuk_game_session:session(),
+                         User :: nuk_user:user()) ->
+    ok |
+    {error, user_not_in_game, Extra :: string()}.
+check_user_can_act(GameSession, User) ->
     case nuk_game_session:has_player(GameSession, User) of
         false ->
-            {error, user_not_in_game, "User has not joined the game and cannot start it"};
+            {error, user_not_in_game, "User has not joined this game"};
         true ->
             ok
     end.
