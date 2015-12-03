@@ -160,13 +160,15 @@ handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
                     GameSession4 = nuk_game_session:increment_turn_number(GameSession3),
                     StateNew = State#{session := GameSession4},
                     {reply, ok, StateNew};
-                {ok, complete, Winners, Losers} ->
-                    GameSession1 = nuk_game_session:set_status(GameSession, complete),
-                    GameSession2 = nuk_game_session:set_winners_losers(GameSession1,
+                {ok, complete, Winners, Losers, GameStateNew} ->
+                    GameSession1 = nuk_game_session:set_game_state(GameSession,
+                                                                   GameStateNew),
+                    GameSession2 = nuk_game_session:set_status(GameSession1, complete),
+                    GameSession3 = nuk_game_session:set_winners_losers(GameSession2,
                                                                        Winners,
                                                                        Losers),
-                    GameSession3 = nuk_game_session:increment_turn_number(GameSession2),
-                    StateNew = State#{session := GameSession3},
+                    GameSession4 = nuk_game_session:increment_turn_number(GameSession3),
+                    StateNew = State#{session := GameSession4},
                     {reply, ok, StateNew}
             end
     end;

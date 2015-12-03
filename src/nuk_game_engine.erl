@@ -15,7 +15,7 @@
 
 -callback player_leave(Player :: nuk_user:user(), EngineState :: term()) ->
     {ok, NewEngineState :: term()} |
-    {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()]} |
+    {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()], NewEngineState :: term()} |
     {error, unknown_user, Extra :: string()}.
 
 -callback start(EngineState :: term()) ->
@@ -23,7 +23,7 @@
 
 -callback turn(Player :: nuk_user:user(), Turn :: term(), EngineState :: term()) ->
     {ok, await_turn, NextTurnPlayers :: [nuk_user:user()], NewEngineState :: term()} |
-    {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()]} |
+    {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()], NewEngineState :: term()} |
     {error, bad_turn_order, Extra :: string()} |
     {error, invalid_turn, Extra :: string()}.
 

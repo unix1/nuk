@@ -39,9 +39,9 @@ turn(User, Turn, #{turn_number := TurnNumber,
         MaxTurns ->
             if
                 NewWins > MaxTurns / 2 ->
-                    {ok, complete, [User], []};
+                    {ok, complete, [User], [], NewState};
                 true ->
-                    {ok, complete, [], [User]}
+                    {ok, complete, [], [User], NewState}
             end;
         _ ->
             {ok, await_turn, [User], NewState}
