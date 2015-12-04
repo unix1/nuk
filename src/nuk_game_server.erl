@@ -43,8 +43,9 @@ init([GameName]) ->
     {error, invalid_game_name, Extra :: string()}.
 create(User, GameName) ->
     {ok, Pid} = supervisor:start_child(nuk_game_sup, [GameName]),
-    %% TODO move to init/1 ?
-    %% TODO at least game module lookup, so it's stored in state
+    %% NOTE we make another gen_server call here so that we can return
+    %% responses during failures - i.e. if we did everything in init
+    %% we wouldn't be able to return the error details from server
     gen_server:call(Pid, {initialize, User}).
 
 -spec join(Pid :: pid(), User :: nuk_user:user()) ->
@@ -60,7 +61,7 @@ join(Pid, User) ->
 leave(Pid, UserSessionId) ->
     gen_server:call(Pid, {player_leave, UserSessionId}).
 
-%% start a game.
+%% start a game
 -spec start(Pid :: pid(), User :: nuk_user:user()) ->
     ok |
     {error, user_not_in_game, Extra :: string()}.
@@ -92,6 +93,7 @@ finish(Pid) ->
 
 handle_call({initialize, User}, _From,
             #{session := GameSession} = State) ->
+    %% NOTE further minor optimization is possible by setting game module in state
     GameModule = get_game_engine_module(GameSession),
     %% TODO support options?
     %% TODO handle when this call fails
