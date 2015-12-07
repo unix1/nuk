@@ -11,8 +11,25 @@
 
 %% TODO errors should probably also return state
 
-initialize(User, []) ->
-    {ok, #{turn_number => 0, wins => 0, losses => 0, max_turns => 3, user => User}}.
+initialize(User, OptionsOverride) ->
+    OptionsDefault = #{
+        turn_number => 0,
+        wins => 0,
+        losses => 0,
+        max_turns => 3,
+        user => User
+    },
+    try lists:foldl(
+            fun({Name, Value}, Acc) -> Acc#{Name := Value} end,
+            OptionsDefault,
+            OptionsOverride
+        ) of
+        Options ->
+            {ok, Options}
+    catch
+        error:{badkey, OptionName} ->
+            {error, invalid_options, OptionName}
+    end.
 
 player_join(_User, State) -> {ok, State}.
 

@@ -14,6 +14,7 @@
 
 % Game flow
 -export([create/2]).
+-export([create/3]).
 -export([join/2]).
 -export([start/2]).
 -export([get_game_session/1]).
@@ -50,11 +51,20 @@ list() ->
     {error, invalid_user_session, Extra :: string()} |
     {error, invalid_game_name, Extra :: string()}.
 create(UserSessionId, GameName) ->
+    create(UserSessionId, GameName, []).
+
+-spec create(UserSessionId :: string(),
+             GameName :: string(),
+             Options :: list(tuple())) ->
+    {ok, GameSessionId :: string()} |
+    {error, invalid_user_session, Extra :: string()} |
+    {error, invalid_game_name, Extra :: string()}.
+create(UserSessionId, GameName, Options) ->
     case get_user(UserSessionId) of
         {error, user_session_not_found, Reason} ->
             {error, user_session_not_found, Reason};
         {ok, User} ->
-            nuk_game_server:create(User, GameName)
+            nuk_game_server:create(User, GameName, Options)
     end.
 
 -spec join(GameSessionId :: string(), UserSessionId :: string()) ->

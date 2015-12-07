@@ -8,7 +8,7 @@
 -behaviour(gen_server).
 
 %% API
--export([create/2]).
+-export([create/3]).
 -export([start/2]).
 -export([join/2]).
 -export([leave/2]).
@@ -37,16 +37,16 @@ init([GameName]) ->
 %% API
 %%====================================================================
 
-%% create a new game session
--spec create(User :: nuk_user:user(), GameName :: string()) ->
+%% create a new game session with options
+-spec create(User :: nuk_user:user(), GameName :: string(), Options :: list()) ->
     {ok, GameSessionId :: string()} |
     {error, invalid_game_name, Extra :: string()}.
-create(User, GameName) ->
+create(User, GameName, Options) ->
     {ok, Pid} = supervisor:start_child(nuk_game_sup, [GameName]),
     %% NOTE we make another gen_server call here so that we can return
     %% responses during failures - i.e. if we did everything in init
     %% we wouldn't be able to return the error details from server
-    gen_server:call(Pid, {initialize, User}).
+    gen_server:call(Pid, {initialize, User, Options}).
 
 -spec join(Pid :: pid(), User :: nuk_user:user()) ->
     ok |
@@ -91,26 +91,28 @@ finish(Pid) ->
 %% Behavior callbacks
 %%====================================================================
 
-handle_call({initialize, User}, _From,
+handle_call({initialize, User, Options}, _From,
             #{session := GameSession} = State) ->
     %% NOTE further minor optimization is possible by setting game module in state
     GameModule = get_game_engine_module(GameSession),
-    %% TODO support options?
-    %% TODO handle when this call fails
-    {ok, GameState} = GameModule:initialize(User, []),
-    GameSession1 = nuk_game_session:set_game_state(GameSession, GameState),
-    GameSession2 = nuk_game_session:set_players(GameSession1, [User]),
-    GameSession3 = nuk_game_session:set_status(GameSession2, initialized),
-    StateNew = State#{session := GameSession3},
-    GameSessionId = nuk_game_sessions:put(self()),
-    {reply, {ok, GameSessionId}, StateNew};
+    case GameModule:initialize(User, Options) of
+        {error, invalid_options, Reason} ->
+            {stop, normal, {error, invalid_options, Reason}, State};
+        {ok, GameState} ->
+            GameSession1 = nuk_game_session:set_game_state(GameSession, GameState),
+            GameSession2 = nuk_game_session:set_players(GameSession1, [User]),
+            GameSession3 = nuk_game_session:set_status(GameSession2, initialized),
+            StateNew = State#{session := GameSession3},
+            GameSessionId = nuk_game_sessions:put(self()),
+            {reply, {ok, GameSessionId}, StateNew}
+    end;
 handle_call({player_join, User}, _From, #{session := GameSession} = State) ->
-    GameModule = get_game_engine_module(GameSession),
-    GameState = nuk_game_session:get_game_state(GameSession),
     case check_user_can_join(GameSession, User) of
         {error, ErrorCode, Reason} ->
             {reply, {error, ErrorCode, Reason}, State};
         ok ->
+            GameModule = get_game_engine_module(GameSession),
+            GameState = nuk_game_session:get_game_state(GameSession),
             case GameModule:player_join(User, GameState) of
                 {error, ErrorCode, Reason} ->
                     {reply, {error, ErrorCode, Reason}, State};
@@ -143,12 +145,12 @@ handle_call({start, User}, _From, #{session := GameSession} = State) ->
 handle_call({get_session}, _From, #{session := GameSession} = State) ->
     {reply, GameSession, State};
 handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
-    GameModule = get_game_engine_module(GameSession),
-    GameState = nuk_game_session:get_game_state(GameSession),
     case check_user_can_turn(GameSession, User) of
         {error, ErrorCode, Reason} ->
             {reply, {error, ErrorCode, Reason}, State};
         ok ->
+            GameModule = get_game_engine_module(GameSession),
+            GameState = nuk_game_session:get_game_state(GameSession),
             case GameModule:turn(User, Turn, GameState) of
                 {error, ErrorCode, Reason} ->
                     {reply, {error, ErrorCode, Reason}, State};

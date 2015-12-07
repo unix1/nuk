@@ -14,6 +14,8 @@
     nuk_games_register_get/1,
     nuk_games_unregister/1,
     nuk_games_list/1,
+    nuk_games_start_with_options_invalid/1,
+    nuk_games_start_with_options_success/1,
     nuk_game_flow/1
 ]).
 
@@ -26,6 +28,8 @@ all() ->
         nuk_games_register_get,
         nuk_games_unregister,
         nuk_games_list,
+        nuk_games_start_with_options_invalid,
+        nuk_games_start_with_options_success,
         nuk_game_flow
     ].
 
@@ -65,6 +69,36 @@ nuk_games_list(_) ->
     ok = nuk_games:register(Game2),
     Expected = lists:sort([Game1, Game2]),
     Expected = lists:sort(nuk_games:list()).
+
+nuk_games_start_with_options_invalid(_) ->
+    % register game
+    Game = nuk_game:new("Coin Flip", nuk_game_coinflip, 1, 1),
+    ok = nuk_games:register(Game),
+
+    % create and login user
+    User1 = nuk_user:new("User1", "Pass1"),
+    ok = nuk_users:put(User1),
+    {ok, UserSessionId1} = nuk_users:login("User1", "Pass1"),
+
+    % create a game with an invalid option
+    {error, invalid_options, _} = nuk_games:create(UserSessionId1, "Coin Flip", [{foo, "bar"}]).
+
+nuk_games_start_with_options_success(_) ->
+    % register game
+    Game = nuk_game:new("Coin Flip", nuk_game_coinflip, 1, 1),
+    ok = nuk_games:register(Game),
+
+    % create and login user
+    User1 = nuk_user:new("User1", "Pass1"),
+    ok = nuk_users:put(User1),
+    {ok, UserSessionId1} = nuk_users:login("User1", "Pass1"),
+
+    % create a game and join players
+    MaxTurns = 10,
+    {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip", [{max_turns, MaxTurns}]),
+    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId),
+    ExpectedGameState1 = #{turn_number => 0, wins => 0, losses => 0, max_turns => MaxTurns, user => User1},
+    ExpectedGameState1 = nuk_game_session:get_game_state(GameSession1).
 
 nuk_game_flow(_) ->
     % register game
