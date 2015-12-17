@@ -33,9 +33,12 @@ initialize(User, OptionsOverride) ->
 
 player_join(_User, State) -> {ok, State}.
 
+player_leave(User, #{user := User, turn_number := 0} = State) ->
+    % no turns made yet, player hasn't lost
+    {ok, complete, [], [], State};
 player_leave(User, #{user := User} = State) ->
-    % player leaves before the game is over
-    {ok, complete, [], [], State}.
+    % player is leaving the game in progress, player loses
+    {ok, complete, [], [User], State}.
 
 start(#{user := User} = State) ->
     {ok, await_turn, [User], State}.

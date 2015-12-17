@@ -14,9 +14,9 @@
     {error, ErrorCode :: atom(), Extra :: string()}.
 
 -callback player_leave(Player :: nuk_user:user(), EngineState :: term()) ->
-    {ok, NewEngineState :: term()} |
+    {ok, await_turn, NextTurnPlayers :: [nuk_user:user()], NewEngineState :: term()} |
     {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()], NewEngineState :: term()} |
-    {error, unknown_user, Extra :: string()}.
+    {error, game_already_started, Extra :: string()}.
 
 -callback start(EngineState :: term()) ->
     {ok, await_turn, NextTurnPlayers :: [nuk_user:user()], NewEngineState :: term()}.

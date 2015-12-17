@@ -16,6 +16,7 @@
 -export([create/2]).
 -export([create/3]).
 -export([join/2]).
+-export([leave/2]).
 -export([start/2]).
 -export([get_game_session/1]).
 -export([turn/3]).
@@ -79,6 +80,20 @@ join(GameSessionId, UserSessionId) ->
             {error, ErrorCode, Reason};
         {ok, User, GamePid} ->
             nuk_game_server:join(GamePid, User)
+    end.
+
+-spec leave(GameSessionId :: string(), UserSessionId :: string()) ->
+    ok |
+    {error, game_session_not_found, Extra :: string()} |
+    {error, user_session_not_found, Extra :: string()} |
+    {error, user_not_in_game, Extra :: string()} |
+    {error, game_already_started, Extra :: string()}.
+leave(GameSessionId, UserSessionId) ->
+    case get_user_game_pid(UserSessionId, GameSessionId) of
+        {error, ErrorCode, Reason} ->
+            {error, ErrorCode, Reason};
+        {ok, User, GamePid} ->
+            nuk_game_server:leave(GamePid, User)
     end.
 
 -spec start(GameSessionId :: string(), UserSessionId :: string()) ->

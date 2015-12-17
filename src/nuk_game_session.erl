@@ -20,6 +20,7 @@
 -export([increment_turn_number/1]).
 -export([set_game_state/2]).
 -export([add_player/2]).
+-export([remove_player/2]).
 -export([set_players/2]).
 -export([set_players_turn/2]).
 -export([set_status/2]).
@@ -130,6 +131,12 @@ add_player(Session, Player) ->
     NewNukState = nuk_state_add_player(NukState, Player),
     Session#{nuk_state := NewNukState}.
 
+-spec remove_player(Session :: session(), Player :: nuk_user:user()) -> session().
+remove_player(Session, Player) ->
+    NukState = get_state(Session),
+    NewNukState = nuk_state_remove_player(NukState, Player),
+    Session#{nuk_state := NewNukState}.
+
 -spec set_players(Session :: session(), Players :: [nuk_user:user()]) -> session().
 set_players(Session, Players) when is_list(Players) ->
     NukState = get_state(Session),
@@ -170,3 +177,9 @@ get_state(#{nuk_state := NukState}) ->
     nuk_state().
 nuk_state_add_player(#{players := Players} = NukState, Player) ->
     NukState#{players := [Player|Players]}.
+
+-spec nuk_state_remove_player(NukState :: nuk_state(), Player :: nuk_user:user()) ->
+    nuk_state().
+nuk_state_remove_player(#{players := Players} = NukState, Player) ->
+    %% TODO should this check by username instead?
+    NukState#{players := lists:delete(Player, Players)}.
