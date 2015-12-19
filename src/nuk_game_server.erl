@@ -69,7 +69,7 @@ start(Pid, User) ->
     gen_server:call(Pid, {start, User}).
 
 %% get game session
--spec get_session(Pid :: pid) -> term().
+-spec get_session(Pid :: pid()) -> nuk_game_session:session().
 get_session(Pid) ->
     gen_server:call(Pid, {get_session}).
 

@@ -18,7 +18,7 @@
     {ok, nuk_game_session:session()}.
 get(SessionId) ->
     Pid = list_to_pid(SessionId),
-    nuk_game_server:get_session(Pid).
+    {ok, nuk_game_server:get_session(Pid)}.
 
 -spec get_pid(SessionId :: string()) ->
     {ok, pid()} |
@@ -43,6 +43,5 @@ delete(SessionId) ->
 list() ->
     GameProcesses = supervisor:which_children(nuk_game_sup),
     lists:map(fun({_, Pid, worker, [nuk_game_server]}) ->
-                  {ok, Session} = nuk_game_server:get_session(Pid),
-                  Session end,
+                  nuk_game_server:get_session(Pid) end,
               GameProcesses).

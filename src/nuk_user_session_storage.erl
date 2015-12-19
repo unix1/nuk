@@ -7,7 +7,7 @@
 
 -callback get(SessionId :: string()) ->
     {ok, nuk_user_session:session()} |
-    {error, ErrorCode :: session_not_found, ErrorText :: string()}.
+    {error, ErrorCode :: user_session_not_found, ErrorText :: string()}.
 
 -callback delete(SessionId :: string()) ->
     ok.

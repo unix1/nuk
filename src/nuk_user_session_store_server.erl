@@ -19,7 +19,7 @@
     {error, user_session_not_found, Extra :: string()}.
 get(SessionId) ->
     try list_to_pid(SessionId) of
-        Pid -> nuk_user_server:get_session(Pid)
+        Pid -> {ok, nuk_user_server:get_session(Pid)}
     catch
         error:badarg -> {error, user_session_not_found, SessionId}
     end.
@@ -33,6 +33,5 @@ delete(SessionId) ->
 list() ->
     UserProcesses = supervisor:which_children(nuk_user_sup),
     lists:map(fun({_, Pid, worker, [nuk_user_server]}) ->
-                  {ok, Session} = nuk_user_server:get_session(Pid),
-                  Session end,
+                  nuk_user_server:get_session(Pid) end,
               UserProcesses).

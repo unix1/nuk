@@ -41,8 +41,7 @@ login(Username, Password) ->
 logout(Pid) ->
     gen_server:call(Pid, {logout}).
 
--spec get_session(Pid :: pid()) ->
-    {ok, nuk_user_session:session()}.
+-spec get_session(Pid :: pid()) -> nuk_user_session:session().
 get_session(Pid) ->
     gen_server:call(Pid, {get_session}).
 
@@ -62,7 +61,7 @@ handle_call({login, Username, Password}, _From, #{session := Session} = State) -
 handle_call({logout}, _From, State) ->
     {stop, normal, ok, State};
 handle_call({get_session}, _From, #{session := Session} = State) ->
-    {reply, {ok, Session}, State}.
+    {reply, Session, State}.
 
 handle_cast(_Msg, State) -> {noreply, State}.
 
