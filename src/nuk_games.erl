@@ -1,5 +1,16 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk games
+%% @doc `nuk_games' module
+%%
+%% This module should be used as an API to interacting with all game related
+%% actions. There are 2 types of actions: (1) game registration, and (2) game
+%% flow.
+%%
+%% The game registration functions are:{@link register/2},
+%% {@link unregister/1}, {@link get/1}, {@link list/0}.
+%%
+%% The game flow functions are: {@link create/2}, {@link create/3},
+%% {@link join/2}, {@link leave/2}, {@link start/2},
+%% {@link get_game_session/1}, {@link turn/3}.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -25,20 +36,44 @@
 %% Game registration
 %%====================================================================
 
+%% @doc Register a game engine
+%%
+%% This registers a game engine with nuk. After creating a new game engine
+%% by implementing the {@link nuk_game_engine} behavior, create a
+%% {@link nuk_game:game()} data type and use it here to register that game.
+%% A game engine must be registered before it can be played.
+%% @end
 -spec register(Game :: nuk_game:game()) -> ok.
 register(Game) ->
     ok = nuk_game_store_server:put(Game).
 
+%% @doc Unregister a game engine
+%%
+%% Unregistering has the opposite effect of registering via {@link register/1}
+%% - it makes nuk forget about the registered game.
+%% @end
 -spec unregister(GameName :: string()) -> ok.
 unregister(GameName) ->
     ok = nuk_game_store_server:delete(GameName).
 
+%% @doc Get a game by its name
+%%
+%% This can be used to look up any registered game metadata for a specific game
+%% engine. Given a game name, get a {@link nuk_game:game()} data type. Then use
+%% {@link nuk_game} module functions to extract needed information.
+%% @end
 -spec get(GameName :: string()) ->
     {ok, nuk_game:game()} |
     {error, game_not_found, string()}.
 get(GameName) ->
     nuk_game_store_server:get(GameName).
 
+%% @doc List all registered games
+%%
+%% Produces a list of all registered games in the system. The return is a list
+%% of {@link nuk_game:game()} data types. Use {@link nuk_game} module
+%% functions to extract needed information from each game element.
+%% @end
 -spec list() -> [nuk_game:game()].
 list() ->
     nuk_game_store_server:list().
@@ -47,6 +82,9 @@ list() ->
 %% Game flow
 %%====================================================================
 
+%% @doc Create a new game session with default options
+%% @equiv create(UserSessionId, GameName, [])
+%% @end
 -spec create(UserSessionId :: string(), GameName :: string()) ->
     {ok, GameSessionId :: string()} |
     {error, invalid_user_session, Extra :: string()} |
@@ -54,6 +92,16 @@ list() ->
 create(UserSessionId, GameName) ->
     create(UserSessionId, GameName, []).
 
+%% @doc Create a new game with options
+%%
+%% Using a logged in user session, create a new game by supplying its
+%% registered name. This does not start a game, but merely creates a new
+%% session allowing other players to join. Game session must be created before
+%% it can be started.
+%%
+%% Calling this function will trigger the {@link nuk_game_engine:initialize/2}
+%% callback.
+%% @end
 -spec create(UserSessionId :: string(),
              GameName :: string(),
              Options :: list(tuple())) ->
@@ -68,6 +116,14 @@ create(UserSessionId, GameName, Options) ->
             nuk_game_server:create(User, GameName, Options)
     end.
 
+%% @doc Join a player to a game session
+%%
+%% Joins a given logged in user session to an existing game session. Game
+%% session must be created first, see {@link create/2} and {@link create/3}.
+%%
+%% Calling this function will trigger the {@link nuk_game_engine:player_join/2}
+%% callback.
+%% @end
 -spec join(GameSessionId :: string(), UserSessionId :: string()) ->
     ok |
     {error, game_session_not_found, Extra :: string()} |
@@ -82,6 +138,14 @@ join(GameSessionId, UserSessionId) ->
             nuk_game_server:join(GamePid, User)
     end.
 
+%% @doc Remove a player from a game session
+%%
+%% This does the opposite of {@link join/2} - it allows a player to leave an
+%% existing game session that the player has already joined.
+%%
+%% Calling this function will trigger the {@link nuk_game_engine:player_leave/2}
+%% callback.
+%% @end
 -spec leave(GameSessionId :: string(), UserSessionId :: string()) ->
     ok |
     {error, game_session_not_found, Extra :: string()} |
@@ -96,6 +160,15 @@ leave(GameSessionId, UserSessionId) ->
             nuk_game_server:leave(GamePid, User)
     end.
 
+%% @doc Start a game
+%%
+%% This starts an existing game session. In general, at this point all players
+%% wishing to participate should have already joined the game via
+%% {@link join/2}.
+%%
+%% Calling this function will trigger the {@link nuk_game_engine:start/1}
+%% callback.
+%% @end
 -spec start(GameSessionId :: string(), UserSessionId :: string()) ->
     ok |
     {error, game_session_not_found, Extra :: string()} |
@@ -110,6 +183,16 @@ start(GameSessionId, UserSessionId) ->
             nuk_game_server:start(GamePid, User)
     end.
 
+%% @doc Get game session containing nuk and game engine states
+%%
+%% Returns the current snapshot of the game session state. The
+%% {@link nuk_game_session} module functions should be used to extract needed
+%% data from the returned {@link nuk_game_session:session()} data type. This is
+%% useful for players to get a new game session state during the game.
+%%
+%% Note that {@link nuk_game_session:get_game_state/1} can be used to extract
+%% arbitrary game state set by the specific {@link nuk_game_engine}.
+%% @end
 -spec get_game_session(GameSessionId :: string()) ->
     {ok, nuk_game_session:session()} |
     {error, game_session_not_found, Extra :: string()}.
@@ -121,6 +204,16 @@ get_game_session(GameSessionId) ->
             {ok, nuk_game_server:get_session(GamePid)}
     end.
 
+%% @doc Make a player turn
+%%
+%% This function should be used when it's time for a specific player to make a
+%% turn. The `Turn' argument is an arbitrary term that is expected by the game
+%% engine. It is not validated by nuk and is passed to the game engine
+%% directly.
+%%
+%% Calling this function will trigger the {@link nuk_game_engine:turn/3}
+%% callback.
+%% @end
 -spec turn(GameSessionId :: string(), UserSessionId :: string(), Turn :: term()) ->
     ok |
     {error, game_session_not_found, Extra :: string()} |
