@@ -1,0 +1,10 @@
+%% encoding: UTF-8
+{application,nuk}.
+{modules,[nuk_app,nuk_game,nuk_game_coinflip,nuk_game_engine,nuk_game_server,
+          nuk_game_session,nuk_game_session_storage,
+          nuk_game_session_store_server,nuk_game_sessions,nuk_game_storage,
+          nuk_game_store_server,nuk_game_store_sup,nuk_game_sup,nuk_games,
+          nuk_sup,nuk_user,nuk_user_server,nuk_user_session,
+          nuk_user_session_storage,nuk_user_session_store_server,
+          nuk_user_sessions,nuk_user_storage,nuk_user_store_server,
+          nuk_user_store_sup,nuk_user_sup,nuk_users]}.
