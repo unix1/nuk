@@ -49,8 +49,8 @@ register(Game) ->
 
 %% @doc Unregister a game engine
 %%
-%% Unregistering has the opposite effect of registering via {@link register/1}
-%% - it makes nuk forget about the registered game.
+%% Unregistering has the opposite effect of registering via {@link register/1}.
+%% It makes nuk forget about the registered game.
 %% @end
 -spec unregister(GameName :: string()) -> ok.
 unregister(GameName) ->
@@ -64,7 +64,7 @@ unregister(GameName) ->
 %% @end
 -spec get(GameName :: string()) ->
     {ok, nuk_game:game()} |
-    {error, game_not_found, string()}.
+    {error, game_not_found, Extra :: string()}.
 get(GameName) ->
     nuk_game_store_server:get(GameName).
 

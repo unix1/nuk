@@ -69,7 +69,7 @@ callback.
 ### get/1 ###
 
 <pre><code>
-get(GameName::string()) -&gt; {ok, <a href="nuk_game.md#type-game">nuk_game:game()</a>} | {error, game_not_found, string()}
+get(GameName::string()) -&gt; {ok, <a href="nuk_game.md#type-game">nuk_game:game()</a>} | {error, game_not_found, Extra::string()}
 </code></pre>
 <br />
 
@@ -211,6 +211,6 @@ unregister(GameName::string()) -&gt; ok
 
 Unregister a game engine
 
-Unregistering has the opposite effect of registering via [`register/1`](#register-1)
-- it makes nuk forget about the registered game.
+Unregistering has the opposite effect of registering via [`register/1`](#register-1).
+It makes nuk forget about the registered game.
 
