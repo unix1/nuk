@@ -1,6 +1,7 @@
 *.coverdata
 *.kdev4
 *.plt
+.erlang.mk
 _rel
 cover
 deps
