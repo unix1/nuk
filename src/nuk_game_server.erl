@@ -1,5 +1,15 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk game server
+%% @doc `nuk_game_server' module
+%%
+%% When a nuk game session is started, a new process is spawned that keeps the
+%% general nuk state and the arbitrary game engine state. It is also
+%% responsible for processing significant events during the lifetime of the
+%% game, triggering appropriate {@link nuk_game_engine} callbacks, and
+%% processing their results. This is the `gen_server' module that accomplishes
+%% the above.
+%%
+%% For public API to accessing this functionality use the {@link nuk_games}
+%% module. Do not call the functions of this module directly.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -37,17 +47,47 @@ init([GameName]) ->
 %% API
 %%====================================================================
 
-%% create a new game session with options
+%% @doc Create a new game session
+%%
+%% Given a user, name of the game and list of options, creates a new game
+%% session. This function does 2 things:
+%%    - starts a new `nuk_game_server' child via {@link nuk_game_sup}
+%%    - sends itself an `initialize' message to invoke the game engine to
+%%      obtain the initial game state
+%%
+%% Calling this function triggers the {@link nuk_game_engine:initialize/2}
+%% callback.
+%%
+%% For public API {@link nuk_games:create/2} or {@link nuk_games:create/3} must
+%% be used.
+%% @end
 -spec create(User :: nuk_user:user(), GameName :: string(), Options :: list()) ->
     {ok, GameSessionId :: string()} |
-    {error, invalid_game_name, Extra :: string()}.
+    {error, invalid_game_name, Extra :: string()} |
+    {error, invalid_options, Extra :: string()}.
 create(User, GameName, Options) ->
     {ok, Pid} = supervisor:start_child(nuk_game_sup, [GameName]),
-    %% NOTE we make another gen_server call here so that we can return
-    %% responses during failures - i.e. if we did everything in init
-    %% we wouldn't be able to return the error details from server
+    %% NOTE we make another gen_server call here for 2 reasons:
+    %% - we need to invoke the `nuk_game_engine:initialize/2' callback and it
+    %%   is not a good practice to potentially block init/1 with an external
+    %%   call
+    %% - so that we can return responses during failures - i.e. if we did
+    %%   everything in init we wouldn't be able to return the error details
+    %%   from server
     gen_server:call(Pid, {initialize, User, Options}).
 
+%% @doc Join a user to the game session
+%%
+%% This is a function powering the implementation of {@link nuk_games:join/2}.
+%% It adds the given user to the current game session after validating that
+%%    - user hasn't already joined the game
+%%    - maximum number of users allowed by the game wouldn't be exceeded
+%%
+%% Calling this function triggers the {@link nuk_game_engine:player_join/2}
+%% callback.
+%%
+%% For public API {@link nuk_games:join/2} must be used.
+%% @end
 -spec join(Pid :: pid(), User :: nuk_user:user()) ->
     ok |
     {error, user_already_joined, Extra :: string()} |
@@ -55,34 +95,76 @@ create(User, GameName, Options) ->
 join(Pid, User) ->
     gen_server:call(Pid, {player_join, User}).
 
+%% @doc Remove a user from the game session
+%%
+%% This is a function powering the implementation of {@link nuk_games:leave/2}.
+%% It removes a given user from the current game session after validating that
+%% user is in the current game session.
+%%
+%% Calling this function triggers the {@link nuk_game_engine:player_leave/2}
+%% callback.
+%%
+%% For public API {@link nuk_games:leave/2} must be used.
+%% @end
 -spec leave(Pid :: pid(), User :: nuk_user:user()) ->
     ok |
     {error, user_not_in_game, Extra :: string()}.
 leave(Pid, User) ->
     gen_server:call(Pid, {player_leave, User}).
 
-%% start a game
+%% @doc Start a game
+%%
+%% This is a function powering the implementation of {@link nuk_games:start/2}.
+%% It starts the current game session after validating that the user requesting
+%% the action is in the current game session.
+%%
+%% Calling this function triggers the {@link nuk_game_engine:start/1} callback.
+%%
+%% For public API {@link nuk_games:start/2} must be used.
+%% @end
 -spec start(Pid :: pid(), User :: nuk_user:user()) ->
     ok |
     {error, user_not_in_game, Extra :: string()}.
 start(Pid, User) ->
     gen_server:call(Pid, {start, User}).
 
-%% get game session
+%% @doc Get a snapshot of game session
+%%
+%% This is a function powering the implementation of
+%% {@link nuk_games:get_game_session/1}. It returns the current snapshot of
+%% the general nuk game session state and arbitrary game engine state.
+%%
+%% For public API {@link nuk_games:get_game_session/1} must be used.
+%% @end
 -spec get_session(Pid :: pid()) -> nuk_game_session:session().
 get_session(Pid) ->
     gen_server:call(Pid, {get_session}).
 
-%% process player's turn
+%% @doc Process player's turn
+%%
+%% This is a function powering the implementation of {@link nuk_games:turn/3}.
+%% It takes and processes a turn for a given player after verifying that the
+%% given player may make a turn at current stage of the game.
+%%
+%% Calling this function triggers the {@link nuk_game_engine:turn/3} callback.
+%% The game engine may return the `invalid_turn' error if the turn data is
+%% not acceptable.
+%%
+%% For public API {@link nuk_games:turn/3} must be used.
+%% @end
 -spec turn(Pid :: pid(), User :: nuk_user:user(), Turn :: term()) ->
     ok |
+    {error, user_not_in_game, Extra :: string()} |
     {error, bad_turn_order, Extra :: string()} |
     {error, invalid_turn, Extra :: string()}.
 turn(Pid, User, Turn) ->
     gen_server:call(Pid, {turn, User, Turn}).
 
-%% end a game
+%% @doc End a game
+%%
 %% TODO figure out finish
+%%
+%% @end
 -spec finish(Pid :: pid()) -> ok.
 finish(Pid) ->
     ok = gen_server:call(Pid, {finish}).

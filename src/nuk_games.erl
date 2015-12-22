@@ -99,7 +99,7 @@ create(UserSessionId, GameName) ->
 %% session allowing other players to join. Game session must be created before
 %% it can be started.
 %%
-%% Calling this function will trigger the {@link nuk_game_engine:initialize/2}
+%% Calling this function triggers the {@link nuk_game_engine:initialize/2}
 %% callback.
 %% @end
 -spec create(UserSessionId :: string(),
@@ -121,7 +121,7 @@ create(UserSessionId, GameName, Options) ->
 %% Joins a given logged in user session to an existing game session. Game
 %% session must be created first, see {@link create/2} and {@link create/3}.
 %%
-%% Calling this function will trigger the {@link nuk_game_engine:player_join/2}
+%% Calling this function triggers the {@link nuk_game_engine:player_join/2}
 %% callback.
 %% @end
 -spec join(GameSessionId :: string(), UserSessionId :: string()) ->
@@ -143,7 +143,7 @@ join(GameSessionId, UserSessionId) ->
 %% This does the opposite of {@link join/2} - it allows a player to leave an
 %% existing game session that the player has already joined.
 %%
-%% Calling this function will trigger the {@link nuk_game_engine:player_leave/2}
+%% Calling this function triggers the {@link nuk_game_engine:player_leave/2}
 %% callback.
 %% @end
 -spec leave(GameSessionId :: string(), UserSessionId :: string()) ->
@@ -166,8 +166,7 @@ leave(GameSessionId, UserSessionId) ->
 %% wishing to participate should have already joined the game via
 %% {@link join/2}.
 %%
-%% Calling this function will trigger the {@link nuk_game_engine:start/1}
-%% callback.
+%% Calling this function triggers the {@link nuk_game_engine:start/1} callback.
 %% @end
 -spec start(GameSessionId :: string(), UserSessionId :: string()) ->
     ok |
@@ -211,13 +210,13 @@ get_game_session(GameSessionId) ->
 %% engine. It is not validated by nuk and is passed to the game engine
 %% directly.
 %%
-%% Calling this function will trigger the {@link nuk_game_engine:turn/3}
-%% callback.
+%% Calling this function triggers the {@link nuk_game_engine:turn/3} callback.
 %% @end
 -spec turn(GameSessionId :: string(), UserSessionId :: string(), Turn :: term()) ->
     ok |
     {error, game_session_not_found, Extra :: string()} |
     {error, user_session_not_found, Extra :: string()} |
+    {error, user_not_in_game, Extra :: string()} |
     {error, bad_turn_order, Extra :: string()} |
     {error, invalid_turn, Extra :: string()}.
 turn(GameSessionId, UserSessionId, Turn) ->
@@ -232,12 +231,26 @@ turn(GameSessionId, UserSessionId, Turn) ->
 %% Internal functions
 %%====================================================================
 
+%% @doc Get user from user session ID
+%% @private
+%%
+%% This is a convenience function to get a user {@link nuk_user:user()} data
+%% type given the user session ID.
+%% @end
 -spec get_user(UserSessionId :: string()) ->
     {ok, User :: nuk_user:user()} |
     {error, user_session_not_found, Extra :: string()}.
 get_user(UserSessionId) ->
     nuk_user_sessions:get_user(UserSessionId).
 
+%% @doc Get both user and game process ID based on respective session IDs
+%% @private
+%%
+%% This is a convenience function get both a user {@link nuk_user:user()} data
+%% type and the game session process `pid()' given the user session ID and the
+%% game session ID. It attempts to get the user session first. If that's
+%% successful then it attempts to get the game session process ID.
+%% end
 -spec get_user_game_pid(UserSessionId :: string(), GameSessionId :: string()) ->
     {ok, User :: nuk_user:user(), GamePid :: pid()} |
     {error, user_session_not_found, Extra :: string()} |
