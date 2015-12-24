@@ -1,5 +1,12 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk top level supervisor.
+%% @doc `nuk_sup' module
+%%
+%% This is a top level `one_for_one' nuk supervisor started by the nuk
+%% application. It, in turn, starts the following supervisors under it:
+%% - {@link nuk_user_sup}
+%% - {@link nuk_user_store_sup}
+%% - {@link nuk_game_sup}
+%% - {@link nuk_game_store_sup}
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -30,6 +37,11 @@ init([]) ->
 %% Internal functions
 %%====================================================================
 
+%% @doc Get children specs
+%% @private
+%%
+%% A convenience function to return all children specs.
+%% @end
 children() ->
     UserSup = ?CHILD(nuk_user_sup, nuk_user_sup, [], supervisor),
     UserStoreSup = ?CHILD(nuk_user_store_sup, nuk_user_store_sup, [], supervisor),

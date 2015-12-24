@@ -5,11 +5,19 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk top level supervisor.
+`nuk_sup` module.
 
 __Behaviours:__ [`supervisor`](supervisor.md).
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+This is a top level `one_for_one` nuk supervisor started by the nuk
+application. It, in turn, starts the following supervisors under it:
+- [`nuk_user_sup`](nuk_user_sup.md)
+- [`nuk_user_store_sup`](nuk_user_store_sup.md)
+- [`nuk_game_sup`](nuk_game_sup.md)
+- [`nuk_game_store_sup`](nuk_game_store_sup.md)<a name="index"></a>
 
 ## Function Index ##
 
