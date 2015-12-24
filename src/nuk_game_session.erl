@@ -4,24 +4,9 @@
 %% This module is used to operate on {@link nuk_game_session:session()} data
 %% type. This data type is used when retrieving the game session state from
 %% {@link nuk_games:get_game_session/1}. It tracks the following data:
-%%
-%% *Game* {@link nuk_game:game()} which this session is for
-%%
-%% *nuk's general state* of the game session containing following
-%%    - `status': game session status, default `nil'
-%%    - `turn_number': current turn number, default `0'
-%%    - `players': list of players currently in the game session, default `[]'
-%%    - `players_turn': list of players who should make turn(s) next,
-%%      default `[]'
-%%    - `players_winners': list of players who won the game, only populated
-%%      after the game completes, default `[]'
-%%    - `players_losers': list of players who lost the game, only populated
-%%      after the game completes, default `[]'
-%%
-%% *game engine's arbitrary state* set by the game engine being played. Since
-%% this state is specific to the game engine, this module can only help get it
-%% as a whole value. Extracting any information out of that state is the
-%% responsibility of the game engine itself.
+%% - Game {@link nuk_game:game()} which this session is for
+%% - nuk's general game session state
+%% - Game engine's arbitrary state
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -52,31 +37,54 @@
 %% Types
 -export_type([session/0]).
 -export_type([nuk_state/0]).
--export_type([nuk_game_session_status/0]).
+-export_type([status/0]).
 
 -opaque session() :: #{game => nuk_game:game(),
                        nuk_state => nuk_state(),
                        game_state => term()}.
 %% Data type used to represent a game session state. Use functions in this
-%% module to operate on this data type.
+%% module to operate on this data type. It contains the following:
+%% - `game': {@link nuk_game:game()} data type, use {@link get_game/1} to
+%%   extract
+%% - `nuk_state': {@link nuk_state()} data type, use functions in this module
+%%   to extract specific values from this state
+%% - `game_state': an arbitrary term that stores the game engine specific
+%%   state, use functions provided by the respective game engine to extract
+%%   information from this data type
 
--opaque nuk_state() :: #{status => nuk_game_session_status(),
+-opaque nuk_state() :: #{status => status(),
                          turn_number => integer(),
                          players => [nuk_user:user()],
                          players_turn => [nuk_user:user()],
                          players_winners => [nuk_user:user()],
                          players_losers => [nuk_user:user()]}.
 %% Data type containing nuk's general game state. This is part of
-%% {@link nuk_game_session:get_game_session()} data type.
+%% {@link session()} data type. Functions in this module can be used to extract
+%% following data that's contained in this data type directly from game
+%% session:
+%% - `status': game session status, default `nil', use {@link get_status/1} to
+%%   extract
+%% - `turn_number': current turn number, default `0', use
+%%   {@link get_turn_number/1} to extract
+%% - `players': list of players currently in the game session, default `[]',
+%%   use {@link get_players/1} to extract
+%% - `players_turn': list of players who should make turn(s) next,
+%%   default `[]', use {@link get_players_turn/1} to extract
+%% - `players_winners': list of players who won the game, only populated
+%%   after the game completes, default `[]', use {@link get_winners_losers/1}
+%%   to extract
+%% - `players_losers': list of players who lost the game, only populated
+%%   after the game completes, default `[]', use {@link get_winners_losers/1}
+%%   to extract
 
--type nuk_game_session_status() :: nil | initialized | await_turn | complete.
+-type status() :: nil | initialized | await_turn | complete.
 %% General game session status tracked by nuk.
 
 %%====================================================================
 %% API
 %%====================================================================
 
-%% @doc Create a new {@link nuk_game_session:get_game_session()} data type.
+%% @doc Create a new {@link session()} data type.
 %%
 %% `Game' is a {@link nuk_game:game()} data type which is stored inside the
 %% session. All other values are set to their defaults. For default values see
@@ -147,7 +155,7 @@ get_players_turn(Session) ->
 %%
 %% Returns an atom status of the game session
 %% @end
--spec get_status(Session :: session()) -> nuk_game_session_status().
+-spec get_status(Session :: session()) -> status().
 get_status(Session) ->
     NukState = get_state(Session),
     #{status := Status} = NukState,
@@ -269,7 +277,7 @@ set_players_turn(Session, Players) when is_list(Players) ->
 %%
 %% nuk uses this function to update the general game status.
 %% @end
--spec set_status(Session:: session(), Status :: nuk_game_session_status()) ->
+-spec set_status(Session:: session(), Status :: status()) ->
     session().
 set_status(Session, Status) when is_atom(Status) ->
     NukState = get_state(Session),

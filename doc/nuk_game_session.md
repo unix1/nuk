@@ -11,43 +11,16 @@
 <a name="description"></a>
 
 ## Description ##
-
 This module is used to operate on [`nuk_game_session:session()`](nuk_game_session.md#type-session) data
 type. This data type is used when retrieving the game session state from
 [`nuk_games:get_game_session/1`](nuk_games.md#get_game_session-1). It tracks the following data:
-
-*Game* [`nuk_game:game()`](nuk_game.md#type-game) which this session is for
-
-*nuk's general state* of the game session containing following
-- `status`: game session status, default `nil`
-- `turn_number`: current turn number, default `0`
-- `players`: list of players currently in the game session, default `[]`
-- `players_turn`: list of players who should make turn(s) next,
-default `[]`
-- `players_winners`: list of players who won the game, only populated
-after the game completes, default `[]`
-- `players_losers`: list of players who lost the game, only populated
-after the game completes, default `[]`
-
-*game engine's arbitrary state* set by the game engine being played. Since
-this state is specific to the game engine, this module can only help get it
-as a whole value. Extracting any information out of that state is the
-responsibility of the game engine itself.
+- Game [`nuk_game:game()`](nuk_game.md#type-game) which this session is for
+- nuk's general game session state
+- Game engine's arbitrary state
 <a name="types"></a>
 
 ## Data Types ##
 
-
-
-
-### <a name="type-nuk_game_session_status">nuk_game_session_status()</a> ###
-
-
-<pre><code>
-nuk_game_session_status() = nil | initialized | await_turn | complete
-</code></pre>
-
- General game session status tracked by nuk.
 
 
 
@@ -57,7 +30,23 @@ nuk_game_session_status() = nil | initialized | await_turn | complete
 __abstract datatype__: `nuk_state()`
 
  Data type containing nuk's general game state. This is part of
-[`nuk_game_session:get_game_session()`](nuk_game_session.md#type-get_game_session) data type.
+[`session()`](#type-session) data type. Functions in this module can be used to extract
+following data that's contained in this data type directly from game
+session:
+- `status`: game session status, default `nil`, use [`get_status/1`](#get_status-1) to
+extract
+- `turn_number`: current turn number, default `0`, use
+[`get_turn_number/1`](#get_turn_number-1) to extract
+- `players`: list of players currently in the game session, default `[]`,
+use [`get_players/1`](#get_players-1) to extract
+- `players_turn`: list of players who should make turn(s) next,
+default `[]`, use [`get_players_turn/1`](#get_players_turn-1) to extract
+- `players_winners`: list of players who won the game, only populated
+after the game completes, default `[]`, use [`get_winners_losers/1`](#get_winners_losers-1)
+to extract
+- `players_losers`: list of players who lost the game, only populated
+after the game completes, default `[]`, use [`get_winners_losers/1`](#get_winners_losers-1)
+to extract
 
 
 
@@ -67,14 +56,32 @@ __abstract datatype__: `nuk_state()`
 __abstract datatype__: `session()`
 
  Data type used to represent a game session state. Use functions in this
-module to operate on this data type.
+module to operate on this data type. It contains the following:
+- `game`: [`nuk_game:game()`](nuk_game.md#type-game) data type, use [`get_game/1`](#get_game-1) to
+extract
+- `nuk_state`: [`nuk_state()`](#type-nuk_state) data type, use functions in this module
+to extract specific values from this state
+- `game_state`: an arbitrary term that stores the game engine specific
+state, use functions provided by the respective game engine to extract
+information from this data type
+
+
+
+### <a name="type-status">status()</a> ###
+
+
+<pre><code>
+status() = nil | initialized | await_turn | complete
+</code></pre>
+
+ General game session status tracked by nuk.
 
 <a name="index"></a>
 
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_player-2">add_player/2</a></td><td>Add a player to the game session.</td></tr><tr><td valign="top"><a href="#get_game-1">get_game/1</a></td><td>Get game.</td></tr><tr><td valign="top"><a href="#get_game_state-1">get_game_state/1</a></td><td>Get game engine arbitrary state.</td></tr><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_count-1">get_players_count/1</a></td><td>Get number of players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_turn-1">get_players_turn/1</a></td><td>Get players who's turn it is next.</td></tr><tr><td valign="top"><a href="#get_status-1">get_status/1</a></td><td>Get game session status.</td></tr><tr><td valign="top"><a href="#get_turn_number-1">get_turn_number/1</a></td><td>Get turn number.</td></tr><tr><td valign="top"><a href="#get_winners_losers-1">get_winners_losers/1</a></td><td>Get winners and losers lists.</td></tr><tr><td valign="top"><a href="#has_player-2">has_player/2</a></td><td>Is a player a member of this game session?.</td></tr><tr><td valign="top"><a href="#increment_turn_number-1">increment_turn_number/1</a></td><td>Increments the internal turn number.</td></tr><tr><td valign="top"><a href="#is_players_turn-2">is_players_turn/2</a></td><td>Is it a given player's turn?.</td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td>Create a new <a href="nuk_game_session.md#type-get_game_session"><code>nuk_game_session:get_game_session()</code></a> data type.</td></tr><tr><td valign="top"><a href="#remove_player-2">remove_player/2</a></td><td>Remove a player from the game session.</td></tr><tr><td valign="top"><a href="#set_game_state-2">set_game_state/2</a></td><td>Sets game engine state in the session.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set a list of players to the current game session.</td></tr><tr><td valign="top"><a href="#set_players_turn-2">set_players_turn/2</a></td><td>Set players who's turn it is next.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>Set game session status.</td></tr><tr><td valign="top"><a href="#set_turn_number-2">set_turn_number/2</a></td><td>Set turn number.</td></tr><tr><td valign="top"><a href="#set_winners_losers-3">set_winners_losers/3</a></td><td>Set winners and losers.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_player-2">add_player/2</a></td><td>Add a player to the game session.</td></tr><tr><td valign="top"><a href="#get_game-1">get_game/1</a></td><td>Get game.</td></tr><tr><td valign="top"><a href="#get_game_state-1">get_game_state/1</a></td><td>Get game engine arbitrary state.</td></tr><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_count-1">get_players_count/1</a></td><td>Get number of players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_turn-1">get_players_turn/1</a></td><td>Get players who's turn it is next.</td></tr><tr><td valign="top"><a href="#get_status-1">get_status/1</a></td><td>Get game session status.</td></tr><tr><td valign="top"><a href="#get_turn_number-1">get_turn_number/1</a></td><td>Get turn number.</td></tr><tr><td valign="top"><a href="#get_winners_losers-1">get_winners_losers/1</a></td><td>Get winners and losers lists.</td></tr><tr><td valign="top"><a href="#has_player-2">has_player/2</a></td><td>Is a player a member of this game session?.</td></tr><tr><td valign="top"><a href="#increment_turn_number-1">increment_turn_number/1</a></td><td>Increments the internal turn number.</td></tr><tr><td valign="top"><a href="#is_players_turn-2">is_players_turn/2</a></td><td>Is it a given player's turn?.</td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td>Create a new <a href="#type-session"><code>session()</code></a> data type.</td></tr><tr><td valign="top"><a href="#remove_player-2">remove_player/2</a></td><td>Remove a player from the game session.</td></tr><tr><td valign="top"><a href="#set_game_state-2">set_game_state/2</a></td><td>Sets game engine state in the session.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set a list of players to the current game session.</td></tr><tr><td valign="top"><a href="#set_players_turn-2">set_players_turn/2</a></td><td>Set players who's turn it is next.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>Set game session status.</td></tr><tr><td valign="top"><a href="#set_turn_number-2">set_turn_number/2</a></td><td>Set turn number.</td></tr><tr><td valign="top"><a href="#set_winners_losers-3">set_winners_losers/3</a></td><td>Set winners and losers.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -171,7 +178,7 @@ the answer to "who's turn is it?" question.
 ### get_status/1 ###
 
 <pre><code>
-get_status(Session::<a href="#type-session">session()</a>) -&gt; <a href="#type-nuk_game_session_status">nuk_game_session_status()</a>
+get_status(Session::<a href="#type-session">session()</a>) -&gt; <a href="#type-status">status()</a>
 </code></pre>
 <br />
 
@@ -260,7 +267,7 @@ new(Game::<a href="nuk_game.md#type-game">nuk_game:game()</a>) -&gt; <a href="#t
 </code></pre>
 <br />
 
-Create a new [`nuk_game_session:get_game_session()`](nuk_game_session.md#type-get_game_session) data type.
+Create a new [`session()`](#type-session) data type.
 
 `Game` is a [`nuk_game:game()`](nuk_game.md#type-game) data type which is stored inside the
 session. All other values are set to their defaults. For default values see
@@ -327,7 +334,7 @@ turn it is next, nuk uses this function to update them in its session state.
 ### set_status/2 ###
 
 <pre><code>
-set_status(Session::<a href="#type-session">session()</a>, Status::<a href="#type-nuk_game_session_status">nuk_game_session_status()</a>) -&gt; <a href="#type-session">session()</a>
+set_status(Session::<a href="#type-session">session()</a>, Status::<a href="#type-status">status()</a>) -&gt; <a href="#type-session">session()</a>
 </code></pre>
 <br />
 
