@@ -5,11 +5,15 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk user store supervisor.
+`nuk_user_store_sup` module.
 
 __Behaviours:__ [`supervisor`](supervisor.md).
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+This supervisor is started by [`nuk_sup`](nuk_sup.md) top level supervisor. It
+supervises [`nuk_user_store_server`](nuk_user_store_server.md).<a name="index"></a>
 
 ## Function Index ##
 

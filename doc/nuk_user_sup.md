@@ -5,11 +5,19 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk user supervisor.
+`nuk_user_sup` module.
 
 __Behaviours:__ [`supervisor`](supervisor.md).
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+
+This supervisor is started by [`nuk_sup`](nuk_sup.md) top level supervisor.
+
+Whenever a user logs in, nuk spawns a new [`nuk_user_server`](nuk_user_server.md). This
+module is for a `simple_one_for_one` supervisor that supervises those
+servers.<a name="index"></a>
 
 ## Function Index ##
 
