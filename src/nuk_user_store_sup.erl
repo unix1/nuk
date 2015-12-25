@@ -1,5 +1,8 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk user store supervisor
+%% @doc `nuk_user_store_sup' module
+%%
+%% This supervisor is started by {@link nuk_sup} top level supervisor. It
+%% supervises {@link nuk_user_store_server}.
 %% @end
 %%%-------------------------------------------------------------------
 

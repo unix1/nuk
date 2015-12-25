@@ -1,5 +1,11 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk user supervisor
+%% @doc `nuk_user_sup' module
+%%
+%% This supervisor is started by {@link nuk_sup} top level supervisor.
+%%
+%% Whenever a user logs in, nuk spawns a new {@link nuk_user_server}. This
+%% module is for a `simple_one_for_one' supervisor that supervises those
+%% servers.
 %% @end
 %%%-------------------------------------------------------------------
 
