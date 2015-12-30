@@ -1,5 +1,12 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk game storage
+%% @doc `nuk_game_storage' module
+%%
+%% This behavior allows to extend the storage service for registered games.
+%% When a new game engine is registered with nuk via
+%% {@link nuk_games:register/1} it is stored internally by the system.
+%% Implementing this behavior allows a custom storage backend to be defined.
+%% The default simple implementation is provided with
+%% {@link nuk_game_store_server}.
 %% @end
 %%%-------------------------------------------------------------------
 

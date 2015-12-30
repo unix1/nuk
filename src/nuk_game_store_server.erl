@@ -1,5 +1,13 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk game storage server
+%% @doc `nuk_game_store_server' module
+%%
+%% This is an implementation of {@link nuk_game_storage} behavior. It is meant
+%% for testing and proof of concept purposes only.
+%%
+%% This is a `gen_server' that's started by the {@link nuk_game_store_sup}
+%% supervisor. It provides storage interface to registered games. For public
+%% API the {@link nuk_games} module should be used which, in turn, will use the
+%% appropriate storage backend.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -31,20 +39,37 @@ init([]) ->
 %% API
 %%====================================================================
 
+%% @doc Delete a game from registry
+%%
+%% Deletes a game by its name from the game registration database.
+%% @end
 -spec delete(GameName :: string()) -> ok.
 delete(GameName) ->
     ok = gen_server:call(?MODULE, {delete, GameName}).
 
+%% @doc Get a game
+%%
+%% Retrieves a game registration by its name from the database.
+%% @end
 -spec get(GameName :: string()) ->
     {ok, nuk_game:game()} |
     {error, game_not_found, string()}.
 get(GameName) ->
     gen_server:call(?MODULE, {get, GameName}).
 
+%% @doc List all games
+%%
+%% Lists all registered games from the registration database.
+%% @end
 -spec list() -> [nuk_game:game()].
 list() ->
     gen_server:call(?MODULE, {list}).
 
+%% @doc Create or replace a game
+%%
+%% If a game by the name is already registered, replaces that registration;
+%% otherwise creates a new registration.
+%% @end
 -spec put(Game :: nuk_game:game()) -> ok.
 put(Game) ->
     ok = gen_server:call(?MODULE, {put, Game}).
@@ -81,12 +106,27 @@ code_change(_OldVersion, State, _Extra) -> {ok, State}.
 %% Internal functions
 %%====================================================================
 
+%% @doc Delete a game from data storage
+%% @private
+%%
+%% Deletes a game by its name from the internal map.
+%% @end
 delete_game(GameName, Data) ->
     maps:remove(GameName, Data).
 
+%% @doc List all games
+%% @private
+%%
+%% Returns all games stored inside the map.
+%% @end
 list_games(Data) ->
     maps:values(Data).
 
+%% @doc Look up a game
+%% @private
+%%
+%% Search for a game by its name in the map.
+%% @end
 lookup_game(GameName, Data) ->
     try maps:get(GameName, Data) of
         Game -> {ok, Game}
