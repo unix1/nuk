@@ -5,11 +5,14 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk application.
+`nuk_app` module.
 
 __Behaviours:__ [`application`](application.md).
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+This starts the nuk application.<a name="index"></a>
 
 ## Function Index ##
 

@@ -1,5 +1,7 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk application
+%% @doc `nuk_app' module
+%%
+%% This starts the nuk application.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -15,7 +17,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-    'nuk_sup':start_link().
+    nuk_sup:start_link().
 
 stop(_State) ->
     ok.

@@ -5,14 +5,25 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk game sessions.
+`nuk_game_sessions` module.
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+
+This module should be used as an API for mapping game session identifiers
+to process IDs:
+- given a game process `pid()` create a new unique session identifier
+- translate a given unique session identifier to the game session `pid()`
+
+The backend implementation of this is swappable. See
+[`nuk_game_session_storage`](nuk_game_session_storage.md) behavior and
+[`nuk_game_session_store_server`](nuk_game_session_store_server.md) default implementation.<a name="index"></a>
 
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td></td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a  process ID.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -28,6 +39,10 @@ get_pid(SessionId::string()) -&gt; {ok, Pid::pid()} | {error, game_session_not_f
 </code></pre>
 <br />
 
+Get a  process ID
+
+Given a previously created session identifier, retrieve a process ID.
+
 <a name="put-1"></a>
 
 ### put/1 ###
@@ -36,4 +51,8 @@ get_pid(SessionId::string()) -&gt; {ok, Pid::pid()} | {error, game_session_not_f
 put(Pid::pid()) -&gt; SessionId::string()
 </code></pre>
 <br />
+
+Create a new session
+
+Given a process ID, create a new unique session identifier.
 
