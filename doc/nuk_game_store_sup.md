@@ -5,11 +5,15 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk game store supervisor.
+`nuk_game_store_sup` module.
 
 __Behaviours:__ [`supervisor`](supervisor.md).
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+This supervisor is started by [`nuk_sup`](nuk_sup.md) top level supervisor. It
+supervises [`nuk_game_store_server`](nuk_game_store_server.md).<a name="index"></a>
 
 ## Function Index ##
 

@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %% @doc `nuk_game_server' module
 %%
-%% When a nuk game session is started, a new process is spawned that keeps the
+%% When a nuk game session is created, a new process is spawned that keeps the
 %% general nuk state and the arbitrary game engine state. It is also
 %% responsible for processing significant events during the lifetime of the
 %% game, triggering appropriate {@link nuk_game_engine} callbacks, and

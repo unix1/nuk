@@ -1,5 +1,8 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk game store supervisor
+%% @doc `nuk_game_store_sup' module
+%%
+%% This supervisor is started by {@link nuk_sup} top level supervisor. It
+%% supervises {@link nuk_game_store_server}.
 %% @end
 %%%-------------------------------------------------------------------
 
