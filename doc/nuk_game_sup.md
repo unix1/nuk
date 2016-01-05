@@ -5,11 +5,19 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk game supervisor.
+`nuk_game_sup` module.
 
 __Behaviours:__ [`supervisor`](supervisor.md).
 
-<a name="index"></a>
+<a name="description"></a>
+
+## Description ##
+
+This supervisor is started by [`nuk_sup`](nuk_sup.md) top level supervisor.
+
+Whenever a new game session is created, nuk spawns a new
+[`nuk_game_server`](nuk_game_server.md). This module is a `simple_one_for_one` supervisor
+that supervises those servers.<a name="index"></a>
 
 ## Function Index ##
 

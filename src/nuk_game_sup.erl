@@ -1,5 +1,11 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk game supervisor
+%% @doc `nuk_game_sup' module
+%%
+%% This supervisor is started by {@link nuk_sup} top level supervisor.
+%%
+%% Whenever a new game session is created, nuk spawns a new
+%% {@link nuk_game_server}. This module is a `simple_one_for_one' supervisor
+%% that supervises those servers.
 %% @end
 %%%-------------------------------------------------------------------
 
