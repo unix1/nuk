@@ -27,6 +27,7 @@ get(SessionId) ->
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
     Pid = list_to_pid(SessionId),
+    %% TODO move this out to nuk_user_sessions
     nuk_user_server:logout(Pid).
 
 -spec list() -> [nuk_user_session:session()].
