@@ -78,8 +78,8 @@ handle_call({login, Username, Password}, _From, #{session := Session} = State) -
         {ok, User} ->
             SessionNew = nuk_user_session:set_user(Session, User),
             StateNew = State#{session := SessionNew},
-            %% TODO move this hack to user session storage
-            {reply, {ok, pid_to_list(self())}, StateNew};
+            SessionId = nuk_user_sessions:put(self()),
+            {reply, {ok, SessionId}, StateNew};
         {error, Reason, Extra} ->
             {stop, normal, {error, Reason, Extra}, State}
     end;

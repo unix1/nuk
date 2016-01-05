@@ -9,6 +9,9 @@
     {ok, nuk_user_session:session()} |
     {error, ErrorCode :: user_session_not_found, ErrorText :: string()}.
 
+-callback put(Pid :: pid()) ->
+    SessionId :: string().
+
 -callback delete(SessionId :: string()) ->
     ok.
 
