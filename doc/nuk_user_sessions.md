@@ -12,7 +12,7 @@ nuk sessions.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td></td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_user-1">get_user/1</a></td><td></td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td></td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td></td></tr><tr><td valign="top"><a href="#get_user-1">get_user/1</a></td><td></td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td></td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -37,6 +37,15 @@ get(SessionId::string()) -&gt; {ok, <a href="nuk_user_session.md#type-session">n
 </code></pre>
 <br />
 
+<a name="get_pid-1"></a>
+
+### get_pid/1 ###
+
+<pre><code>
+get_pid(SessionId::string()) -&gt; {ok, pid()} | {error, user_session_not_found, Extra::string()}
+</code></pre>
+<br />
+
 <a name="get_user-1"></a>
 
 ### get_user/1 ###
@@ -52,6 +61,15 @@ get_user(SessionId::string()) -&gt; {ok, <a href="nuk_user.md#type-user">nuk_use
 
 <pre><code>
 list() -&gt; [<a href="nuk_user_session.md#type-session">nuk_user_session:session()</a>]
+</code></pre>
+<br />
+
+<a name="put-1"></a>
+
+### put/1 ###
+
+<pre><code>
+put(Pid::pid()) -&gt; SessionId::string()
 </code></pre>
 <br />
 

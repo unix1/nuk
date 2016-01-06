@@ -9,7 +9,7 @@
 -module(nuk_users).
 
 %% API
--export([delete/1, get/1, put/1, login/2, list/0]).
+-export([delete/1, get/1, put/1, login/2, logout/1, list/0]).
 
 %% @doc Delete an existing user
 %%
@@ -52,6 +52,13 @@ put(User) ->
     {error, ErrorCode :: atom(), Extra :: string()}.
 login(Username, Password) ->
     nuk_user_server:login(Username, Password).
+
+%% @doc Log out a user session
+%% @equiv nuk_user_sessions:delete(SessionId)
+%% @end
+-spec logout(SessionId :: string()) -> ok.
+logout(SessionId) ->
+    nuk_user_sessions:delete(SessionId).
 
 %% @doc List all users
 %%

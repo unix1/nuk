@@ -16,7 +16,7 @@ actions.<a name="index"></a>
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Delete an existing user.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>Get a user.</td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td>List all users.</td></tr><tr><td valign="top"><a href="#login-2">login/2</a></td><td>Login a user.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create new or update an existing user.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Delete an existing user.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>Get a user.</td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td>List all users.</td></tr><tr><td valign="top"><a href="#login-2">login/2</a></td><td>Login a user.</td></tr><tr><td valign="top"><a href="#logout-1">logout/1</a></td><td>Log out a user session.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create new or update an existing user.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -80,6 +80,19 @@ Login a user
 Given a username and a password attempt to login a user. If login is
 successful, a new user session identifier is returned; otherwise, an error
 is returned.
+
+<a name="logout-1"></a>
+
+### logout/1 ###
+
+<pre><code>
+logout(SessionId::string()) -&gt; ok
+</code></pre>
+<br />
+
+Equivalent to [`nuk_user_sessions:delete(SessionId)`](nuk_user_sessions.md#delete-1).
+
+Log out a user session
 
 <a name="put-1"></a>
 

@@ -8,18 +8,18 @@
 -behaviour(nuk_user_session_storage).
 
 %% API
--export([get/1, put/1, delete/1, list/0]).
+-export([get_pid/1, put/1, delete/1, list/0]).
 
 %%====================================================================
 %% API
 %%====================================================================
 
--spec get(SessionId :: string()) ->
-    {ok, nuk_user_session:session()} |
+-spec get_pid(SessionId :: string()) ->
+    {ok, pid()} |
     {error, user_session_not_found, Extra :: string()}.
-get(SessionId) ->
+get_pid(SessionId) ->
     try list_to_pid(SessionId) of
-        Pid -> {ok, nuk_user_server:get_session(Pid)}
+        Pid -> {ok, Pid}
     catch
         error:badarg -> {error, user_session_not_found, SessionId}
     end.
@@ -30,9 +30,7 @@ put(Pid) when is_pid(Pid) ->
 
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
-    Pid = list_to_pid(SessionId),
-    %% TODO move this out to nuk_user_sessions
-    nuk_user_server:logout(Pid).
+    ok.
 
 -spec list() -> [nuk_user_session:session()].
 list() ->
