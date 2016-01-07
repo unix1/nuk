@@ -17,7 +17,7 @@
 %% API
 -export([get_pid/1, put/1]).
 
-%% @doc Get a  process ID
+%% @doc Get a process ID
 %%
 %% Given a previously created session identifier, retrieve a process ID.
 %% @end

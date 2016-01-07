@@ -23,7 +23,7 @@ The backend implementation of this is swappable. See
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a  process ID.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a process ID.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -39,7 +39,7 @@ get_pid(SessionId::string()) -&gt; {ok, Pid::pid()} | {error, game_session_not_f
 </code></pre>
 <br />
 
-Get a  process ID
+Get a process ID
 
 Given a previously created session identifier, retrieve a process ID.
 
