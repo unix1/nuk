@@ -1,5 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk user session storage
+%% @doc `nuk_user_session_storage' module
+%%
+%% This is a behavior that allows to extend the user session ID to user process
+%% ID map. The default simple proof of concept implementation is provided in
+%% {@link nuk_user_session_store_server}.
 %% @end
 %%%-------------------------------------------------------------------
 

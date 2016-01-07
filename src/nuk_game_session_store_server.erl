@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk_game_session_store_server module
+%% @doc `nuk_game_session_store_server' module
 %%
 %% This is an implementation of {@link nuk_game_session_storage} behavior. It
 %% is meant for testing and proof of concept purposes only.
