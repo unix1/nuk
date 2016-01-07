@@ -5,7 +5,7 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk_game_session_store_server module.
+`nuk_game_session_store_server` module.
 
 __Behaviours:__ [`nuk_game_session_storage`](nuk_game_session_storage.md).
 
