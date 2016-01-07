@@ -33,6 +33,11 @@ init([]) ->
 %% Internal functions
 %%====================================================================
 
+%% @doc Get children specs
+%% @private
+%%
+%% A convenience function to return all children specs.
+%% @end
 children() ->
     UserStore = ?CHILD(nuk_game_store_server, nuk_game_store_server, [], worker),
     [UserStore].
