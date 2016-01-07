@@ -1,5 +1,12 @@
 %%%-------------------------------------------------------------------
-%% @doc nuk game storage
+%% @doc `nuk_user_storage' module
+%%
+%% This behavior allows to extend the storage service for registered users.
+%% When a new user is created engine with nuk via
+%% {@link nuk_users:put/1} it is stored internally by the system.
+%% Implementing this behavior allows a custom storage backend to be defined.
+%% The default simple implementation is provided with
+%% {@link nuk_user_store_server}.
 %% @end
 %%%-------------------------------------------------------------------
 
