@@ -24,32 +24,6 @@ type. This data type is used when retrieving the game session state from
 
 
 
-### <a name="type-nuk_state">nuk_state()</a> ###
-
-
-__abstract datatype__: `nuk_state()`
-
- Data type containing nuk's general game state. This is part of
-[`session()`](#type-session) data type. Functions in this module can be used to extract
-following data that's contained in this data type directly from game
-session:
-- `status`: game session status, default `nil`, use [`get_status/1`](#get_status-1) to
-extract
-- `turn_number`: current turn number, default `0`, use
-[`get_turn_number/1`](#get_turn_number-1) to extract
-- `players`: list of players currently in the game session, default `[]`,
-use [`get_players/1`](#get_players-1) to extract
-- `players_turn`: list of players who should make turn(s) next,
-default `[]`, use [`get_players_turn/1`](#get_players_turn-1) to extract
-- `players_winners`: list of players who won the game, only populated
-after the game completes, default `[]`, use [`get_winners_losers/1`](#get_winners_losers-1)
-to extract
-- `players_losers`: list of players who lost the game, only populated
-after the game completes, default `[]`, use [`get_winners_losers/1`](#get_winners_losers-1)
-to extract
-
-
-
 ### <a name="type-session">session()</a> ###
 
 
@@ -59,22 +33,11 @@ __abstract datatype__: `session()`
 module to operate on this data type. It contains the following:
 - `game`: [`nuk_game:game()`](nuk_game.md#type-game) data type, use [`get_game/1`](#get_game-1) to
 extract
-- `nuk_state`: [`nuk_state()`](#type-nuk_state) data type, use functions in this module
-to extract specific values from this state
+- `nuk_state`: [`nuk_game_state:state()`](nuk_game_state.md#type-state) data type, use functions in
+this module to extract specific values from this state
 - `game_state`: an arbitrary term that stores the game engine specific
 state, use functions provided by the respective game engine to extract
 information from this data type
-
-
-
-### <a name="type-status">status()</a> ###
-
-
-<pre><code>
-status() = nil | initialized | await_turn | complete
-</code></pre>
-
- General game session status tracked by nuk.
 
 <a name="index"></a>
 
@@ -178,7 +141,7 @@ the answer to "who's turn is it?" question.
 ### get_status/1 ###
 
 <pre><code>
-get_status(Session::<a href="#type-session">session()</a>) -&gt; <a href="#type-status">status()</a>
+get_status(Session::<a href="#type-session">session()</a>) -&gt; <a href="nuk_game_state.md#type-status">nuk_game_state:status()</a>
 </code></pre>
 <br />
 
@@ -334,7 +297,7 @@ turn it is next, nuk uses this function to update them in its session state.
 ### set_status/2 ###
 
 <pre><code>
-set_status(Session::<a href="#type-session">session()</a>, Status::<a href="#type-status">status()</a>) -&gt; <a href="#type-session">session()</a>
+set_status(Session::<a href="#type-session">session()</a>, Status::<a href="nuk_game_state.md#type-status">nuk_game_state:status()</a>) -&gt; <a href="#type-session">session()</a>
 </code></pre>
 <br />
 

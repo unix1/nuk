@@ -36,49 +36,19 @@
 
 %% Types
 -export_type([session/0]).
--export_type([nuk_state/0]).
--export_type([status/0]).
 
 -opaque session() :: #{game => nuk_game:game(),
-                       nuk_state => nuk_state(),
+                       nuk_state => nuk_game_state:state(),
                        game_state => term()}.
 %% Data type used to represent a game session state. Use functions in this
 %% module to operate on this data type. It contains the following:
 %% - `game': {@link nuk_game:game()} data type, use {@link get_game/1} to
 %%   extract
-%% - `nuk_state': {@link nuk_state()} data type, use functions in this module
-%%   to extract specific values from this state
+%% - `nuk_state': {@link nuk_game_state:state()} data type, use functions in
+%%   this module to extract specific values from this state
 %% - `game_state': an arbitrary term that stores the game engine specific
 %%   state, use functions provided by the respective game engine to extract
 %%   information from this data type
-
--opaque nuk_state() :: #{status => status(),
-                         turn_number => integer(),
-                         players => [nuk_user:user()],
-                         players_turn => [nuk_user:user()],
-                         players_winners => [nuk_user:user()],
-                         players_losers => [nuk_user:user()]}.
-%% Data type containing nuk's general game state. This is part of
-%% {@link session()} data type. Functions in this module can be used to extract
-%% following data that's contained in this data type directly from game
-%% session:
-%% - `status': game session status, default `nil', use {@link get_status/1} to
-%%   extract
-%% - `turn_number': current turn number, default `0', use
-%%   {@link get_turn_number/1} to extract
-%% - `players': list of players currently in the game session, default `[]',
-%%   use {@link get_players/1} to extract
-%% - `players_turn': list of players who should make turn(s) next,
-%%   default `[]', use {@link get_players_turn/1} to extract
-%% - `players_winners': list of players who won the game, only populated
-%%   after the game completes, default `[]', use {@link get_winners_losers/1}
-%%   to extract
-%% - `players_losers': list of players who lost the game, only populated
-%%   after the game completes, default `[]', use {@link get_winners_losers/1}
-%%   to extract
-
--type status() :: nil | initialized | await_turn | complete.
-%% General game session status tracked by nuk.
 
 %%====================================================================
 %% API
@@ -126,10 +96,8 @@ get_game_state(#{game_state := GameState}) ->
 %% of players currently joined to this game session.
 %% @end
 -spec get_players(Session :: session()) -> [nuk_user:user()].
-get_players(Session) ->
-    NukState = get_state(Session),
-    #{players := Players} = NukState,
-    Players.
+get_players(#{nuk_state := NukState}) ->
+    nuk_game_state:get_players(NukState).
 
 %% @doc Get number of players currently in the game session
 %%
@@ -146,20 +114,16 @@ get_players_count(Session) ->
 %% the answer to "who's turn is it?" question.
 %% @end
 -spec get_players_turn(Session :: session()) -> [nuk_user:user()].
-get_players_turn(Session) ->
-    NukState = get_state(Session),
-    #{players_turn := PlayersTurn} = NukState,
-    PlayersTurn.
+get_players_turn(#{nuk_state := NukState}) ->
+    nuk_game_state:get_players_turn(NukState).
 
 %% @doc Get game session status
 %%
 %% Returns an atom status of the game session
 %% @end
--spec get_status(Session :: session()) -> status().
-get_status(Session) ->
-    NukState = get_state(Session),
-    #{status := Status} = NukState,
-    Status.
+-spec get_status(Session :: session()) -> nuk_game_state:status().
+get_status(#{nuk_state := NukState}) ->
+    nuk_game_state:get_status(NukState).
 
 %% @doc Get turn number
 %%
@@ -167,10 +131,8 @@ get_status(Session) ->
 %% This returns the current turn number from the game session.
 %% @end
 -spec get_turn_number(Session :: session()) -> non_neg_integer().
-get_turn_number(Session) ->
-    NukState = get_state(Session),
-    #{turn_number := TurnNumber} = NukState,
-    TurnNumber.
+get_turn_number(#{nuk_state := NukState}) ->
+    nuk_game_state:get_turn_number(NukState).
 
 %% @doc Get winners and losers lists
 %%
@@ -181,10 +143,8 @@ get_turn_number(Session) ->
 %% @end
 -spec get_winners_losers(Session :: session()) ->
     {Winners :: [nuk_user:user()], Losers :: [nuk_user:user()]}.
-get_winners_losers(Session) ->
-    NukState = get_state(Session),
-    #{players_winners := Winners, players_losers := Losers} = NukState,
-    {Winners, Losers}.
+get_winners_losers(#{nuk_state := NukState}) ->
+    nuk_game_state:get_winners_losers(NukState).
 
 %% @doc Is a player a member of this game session?
 %%
@@ -235,10 +195,10 @@ set_game_state(Session, GameState) ->
 %% the game session.
 %% @end
 -spec add_player(Session :: session(), Player :: nuk_user:user()) -> session().
-add_player(Session, Player) ->
-    NukState = get_state(Session),
-    NewNukState = nuk_state_add_player(NukState, Player),
-    Session#{nuk_state := NewNukState}.
+add_player(#{nuk_state := NukState} = Session, Player) ->
+    Players = nuk_game_state:get_players(NukState),
+    NewPlayers = [Player|Players],
+    Session#{nuk_state := nuk_game_state:set_players(NukState, NewPlayers)}.
 
 %% @doc Remove a player from the game session
 %%
@@ -247,10 +207,10 @@ add_player(Session, Player) ->
 %% @end
 -spec remove_player(Session :: session(), Player :: nuk_user:user()) ->
     session().
-remove_player(Session, Player) ->
-    NukState = get_state(Session),
-    NewNukState = nuk_state_remove_player(NukState, Player),
-    Session#{nuk_state := NewNukState}.
+remove_player(#{nuk_state := NukState} = Session, Player) ->
+    Players = nuk_game_state:get_players(NukState),
+    NewPlayers = lists:delete(Player, Players),
+    Session#{nuk_state := nuk_game_state:set_players(NukState, NewPlayers)}.
 
 %% @doc Set a list of players to the current game session
 %%
@@ -258,9 +218,8 @@ remove_player(Session, Player) ->
 %% @end
 -spec set_players(Session :: session(), Players :: [nuk_user:user()]) ->
     session().
-set_players(Session, Players) when is_list(Players) ->
-    NukState = get_state(Session),
-    Session#{nuk_state := NukState#{players := Players}}.
+set_players(#{nuk_state := NukState} = Session, Players) when is_list(Players) ->
+    Session#{nuk_state := nuk_game_state:set_players(NukState, Players)}.
 
 %% @doc Set players who's turn it is next
 %%
@@ -269,29 +228,26 @@ set_players(Session, Players) when is_list(Players) ->
 %% @end
 -spec set_players_turn(Session :: session(), Players :: [nuk_user:user()]) ->
     session().
-set_players_turn(Session, Players) when is_list(Players) ->
-    NukState = get_state(Session),
-    Session#{nuk_state := NukState#{players_turn := Players}}.
+set_players_turn(#{nuk_state := NukState} = Session, Players) when is_list(Players) ->
+    Session#{nuk_state := nuk_game_state:set_players_turn(NukState, Players)}.
 
 %% @doc Set game session status
 %%
 %% nuk uses this function to update the general game status.
 %% @end
--spec set_status(Session:: session(), Status :: status()) ->
+-spec set_status(Session:: session(), Status :: nuk_game_state:status()) ->
     session().
-set_status(Session, Status) when is_atom(Status) ->
-    NukState = get_state(Session),
-    Session#{nuk_state := NukState#{status := Status}}.
+set_status(#{nuk_state := NukState} = Session, Status) when is_atom(Status) ->
+    Session#{nuk_state := nuk_game_state:set_status(NukState, Status)}.
 
 %% @doc Set turn number
 %%
 %% Sets turn number to a specified integer.
 %% @end
--spec set_turn_number(Session:: session(), TurnNumber :: non_neg_integer()) ->
+-spec set_turn_number(Session :: session(), TurnNumber :: non_neg_integer()) ->
     session().
-set_turn_number(Session, TurnNumber) when is_integer(TurnNumber) ->
-    NukState = get_state(Session),
-    Session#{nuk_state := NukState#{turn_number := TurnNumber}}.
+set_turn_number(#{nuk_state := NukState} = Session, TurnNumber) when is_integer(TurnNumber) ->
+    Session#{nuk_state := nuk_game_state:set_turn_number(NukState, TurnNumber)}.
 
 %% @doc Set winners and losers
 %%
@@ -299,46 +255,8 @@ set_turn_number(Session, TurnNumber) when is_integer(TurnNumber) ->
 %% is used once the game has completed.
 %% @end
 -spec set_winners_losers(Session :: session(),
-                  Winners :: [nuk_user:user()],
-                  Losers :: [nuk_user:user()]) -> session().
-set_winners_losers(Session, Winners, Losers) ->
-    NukState = get_state(Session),
-    Session#{nuk_state := NukState#{players_winners := Winners,
-                                    players_losers := Losers}}.
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
-
-%% @doc Extract the general nuk state from game session
-%% @private
-%%
-%% This is a convenience function to extract the
-%% {@link nuk_game_session:nuk_state()} from the current session.
-%% @end
--spec get_state(Session :: session()) -> nuk_state().
-get_state(#{nuk_state := NukState}) ->
-    NukState.
-
-%% @doc Add a player to nuk state
-%% @private
-%%
-%% This is a convenience function to add a player to the
-%% {@link nuk_game_session:nuk_state()}.
-%% @end
--spec nuk_state_add_player(NukState :: nuk_state(), Player :: nuk_user:user()) ->
-    nuk_state().
-nuk_state_add_player(#{players := Players} = NukState, Player) ->
-    NukState#{players := [Player|Players]}.
-
-%% @doc Remove player from nuk state
-%% @private
-%%
-%% This is a convenience function to remove a player from the
-%% {@link nuk_game_session:nuk_state()}.
-%% @end
--spec nuk_state_remove_player(NukState :: nuk_state(), Player :: nuk_user:user()) ->
-    nuk_state().
-nuk_state_remove_player(#{players := Players} = NukState, Player) ->
-    %% TODO should this check by username instead?
-    NukState#{players := lists:delete(Player, Players)}.
+                         Winners :: [nuk_user:user()],
+                         Losers :: [nuk_user:user()]) ->
+    session().
+set_winners_losers(#{nuk_state := NukState} = Session, Winners, Losers) ->
+    Session#{nuk_state := nuk_game_state:set_winners_losers(NukState, Winners, Losers)}.

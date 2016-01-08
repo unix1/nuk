@@ -16,6 +16,7 @@
 <tr><td><a href="nuk_game_session_storage.md" class="module">nuk_game_session_storage</a></td></tr>
 <tr><td><a href="nuk_game_session_store_server.md" class="module">nuk_game_session_store_server</a></td></tr>
 <tr><td><a href="nuk_game_sessions.md" class="module">nuk_game_sessions</a></td></tr>
+<tr><td><a href="nuk_game_state.md" class="module">nuk_game_state</a></td></tr>
 <tr><td><a href="nuk_game_storage.md" class="module">nuk_game_storage</a></td></tr>
 <tr><td><a href="nuk_game_store_server.md" class="module">nuk_game_store_server</a></td></tr>
 <tr><td><a href="nuk_game_store_sup.md" class="module">nuk_game_store_sup</a></td></tr>
