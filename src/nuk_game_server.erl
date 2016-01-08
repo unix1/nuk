@@ -83,7 +83,7 @@ create(User, GameName, Options) ->
 %%    - user hasn't already joined the game
 %%    - maximum number of users allowed by the game wouldn't be exceeded
 %%
-%% Calling this function triggers the {@link nuk_game_engine:player_join/2}
+%% Calling this function triggers the {@link nuk_game_engine:player_join/3}
 %% callback.
 %%
 %% For public API {@link nuk_games:join/2} must be used.
@@ -101,7 +101,7 @@ join(Pid, User) ->
 %% It removes a given user from the current game session after validating that
 %% user is in the current game session.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:player_leave/2}
+%% Calling this function triggers the {@link nuk_game_engine:player_leave/3}
 %% callback.
 %%
 %% For public API {@link nuk_games:leave/2} must be used.
@@ -118,7 +118,7 @@ leave(Pid, User) ->
 %% It starts the current game session after validating that the user requesting
 %% the action is in the current game session.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:start/1} callback.
+%% Calling this function triggers the {@link nuk_game_engine:start/2} callback.
 %%
 %% For public API {@link nuk_games:start/2} must be used.
 %% @end
@@ -146,7 +146,7 @@ get_session(Pid) ->
 %% It takes and processes a turn for a given player after verifying that the
 %% given player may make a turn at current stage of the game.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:turn/3} callback.
+%% Calling this function triggers the {@link nuk_game_engine:turn/4} callback.
 %% The game engine may return the `invalid_turn' error if the turn data is
 %% not acceptable.
 %%
@@ -195,7 +195,8 @@ handle_call({player_join, User}, _From, #{session := GameSession} = State) ->
         ok ->
             GameModule = get_game_engine_module(GameSession),
             GameState = nuk_game_session:get_game_state(GameSession),
-            case GameModule:player_join(User, GameState) of
+            NukState = nuk_game_session:get_nuk_state(GameSession),
+            case GameModule:player_join(User, GameState, NukState) of
                 {error, ErrorCode, Reason} ->
                     {reply, {error, ErrorCode, Reason}, State};
                 {ok, GameStateNew} ->
@@ -213,8 +214,9 @@ handle_call({player_leave, User}, _From, #{session := GameSession} = State) ->
         ok ->
             GameModule = get_game_engine_module(GameSession),
             GameState = nuk_game_session:get_game_state(GameSession),
+            NukState = nuk_game_session:get_nuk_state(GameSession),
             %% TODO below logic w/minor variation is repeated between player_leave and turn
-            case GameModule:player_leave(User, GameState) of
+            case GameModule:player_leave(User, GameState, NukState) of
                 {error, game_already_started, Reason} ->
                     {reply, {error, game_already_started, Reason}, State};
                 {ok, await_turn, NextTurnPlayers, GameStateNew} ->
@@ -246,7 +248,9 @@ handle_call({start, User}, _From, #{session := GameSession} = State) ->
         ok ->
             GameModule = get_game_engine_module(GameSession),
             GameState = nuk_game_session:get_game_state(GameSession),
-            {ok, await_turn, NextTurnPlayers, GameStateNew} = GameModule:start(GameState),
+            NukState = nuk_game_session:get_nuk_state(GameSession),
+            {ok, await_turn, NextTurnPlayers, GameStateNew} =
+                GameModule:start(GameState, NukState),
             GameSession1 = nuk_game_session:set_game_state(GameSession, GameStateNew),
             GameSession2 = nuk_game_session:set_status(GameSession1, await_turn),
             GameSession3 = nuk_game_session:set_players_turn(GameSession2,
@@ -264,7 +268,8 @@ handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
         ok ->
             GameModule = get_game_engine_module(GameSession),
             GameState = nuk_game_session:get_game_state(GameSession),
-            case GameModule:turn(User, Turn, GameState) of
+            NukState = nuk_game_session:get_nuk_state(GameSession),
+            case GameModule:turn(User, Turn, GameState, NukState) of
                 {error, ErrorCode, Reason} ->
                     {reply, {error, ErrorCode, Reason}, State};
                 {ok, await_turn, NextTurnPlayers, GameStateNew} ->

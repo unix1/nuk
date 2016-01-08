@@ -121,7 +121,7 @@ create(UserSessionId, GameName, Options) ->
 %% Joins a given logged in user session to an existing game session. Game
 %% session must be created first, see {@link create/2} and {@link create/3}.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:player_join/2}
+%% Calling this function triggers the {@link nuk_game_engine:player_join/3}
 %% callback.
 %% @end
 -spec join(GameSessionId :: string(), UserSessionId :: string()) ->
@@ -143,7 +143,7 @@ join(GameSessionId, UserSessionId) ->
 %% This does the opposite of {@link join/2} - it allows a player to leave an
 %% existing game session that the player has already joined.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:player_leave/2}
+%% Calling this function triggers the {@link nuk_game_engine:player_leave/3}
 %% callback.
 %% @end
 -spec leave(GameSessionId :: string(), UserSessionId :: string()) ->
@@ -166,7 +166,7 @@ leave(GameSessionId, UserSessionId) ->
 %% wishing to participate should have already joined the game via
 %% {@link join/2}.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:start/1} callback.
+%% Calling this function triggers the {@link nuk_game_engine:start/2} callback.
 %% @end
 -spec start(GameSessionId :: string(), UserSessionId :: string()) ->
     ok |
@@ -210,7 +210,7 @@ get_game_session(GameSessionId) ->
 %% engine. It is not validated by nuk and is passed to the game engine
 %% directly.
 %%
-%% Calling this function triggers the {@link nuk_game_engine:turn/3} callback.
+%% Calling this function triggers the {@link nuk_game_engine:turn/4} callback.
 %% @end
 -spec turn(GameSessionId :: string(), UserSessionId :: string(), Turn :: term()) ->
     ok |

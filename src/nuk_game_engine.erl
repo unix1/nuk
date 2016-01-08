@@ -15,23 +15,26 @@
     {ok, EngineState :: term()} |
     {error, invalid_options, Extra :: string()}.
 
--callback player_join(Player :: nuk_user:user(), EngineState :: term()) ->
+-callback player_join(Player :: nuk_user:user(), EngineState :: term(),
+                      NukState :: nuk_game_state:state()) ->
     {ok, NewEngineState :: term()} |
     {error, ErrorCode :: atom(), Extra :: string()}.
 
--callback player_leave(Player :: nuk_user:user(), EngineState :: term()) ->
+-callback player_leave(Player :: nuk_user:user(), EngineState :: term(),
+                       NukState :: nuk_game_state:state()) ->
     {ok, await_turn, NextTurnPlayers :: [nuk_user:user()], NewEngineState :: term()} |
     {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()], NewEngineState :: term()} |
     {error, game_already_started, Extra :: string()}.
 
--callback start(EngineState :: term()) ->
+-callback start(EngineState :: term(), NukState :: nuk_game_state:state()) ->
     {ok, await_turn, NextTurnPlayers :: [nuk_user:user()], NewEngineState :: term()}.
 
--callback turn(Player :: nuk_user:user(), Turn :: term(), EngineState :: term()) ->
+-callback turn(Player :: nuk_user:user(), Turn :: term(), EngineState :: term(),
+               NukState :: nuk_game_state:state()) ->
     {ok, await_turn, NextTurnPlayers :: [nuk_user:user()], NewEngineState :: term()} |
     {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()], NewEngineState :: term()} |
     {error, bad_turn_order, Extra :: string()} |
     {error, invalid_turn, Extra :: string()}.
 
--callback finish(EngineState :: term()) ->
+-callback finish(EngineState :: term(), NukState :: nuk_game_state:state()) ->
     ok.

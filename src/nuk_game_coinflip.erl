@@ -7,7 +7,7 @@
 
 -behaviour(nuk_game_engine).
 
--export([initialize/2, player_join/2, player_leave/2, start/1, turn/3, finish/1]).
+-export([initialize/2, player_join/3, player_leave/3, start/2, turn/4, finish/2]).
 
 %% TODO errors should probably also return state
 
@@ -31,23 +31,24 @@ initialize(User, OptionsOverride) ->
             {error, invalid_options, OptionName}
     end.
 
-player_join(_User, State) -> {ok, State}.
+player_join(_User, State, _NukState) -> {ok, State}.
 
-player_leave(User, #{user := User, turn_number := 0} = State) ->
+player_leave(User, #{user := User, turn_number := 0} = State, _NukState) ->
     % no turns made yet, player hasn't lost
     {ok, complete, [], [], State};
-player_leave(User, #{user := User} = State) ->
+player_leave(User, #{user := User} = State, _NukState) ->
     % player is leaving the game in progress, player loses
     {ok, complete, [], [User], State}.
 
-start(#{user := User} = State) ->
+start(#{user := User} = State, _NukState) ->
     {ok, await_turn, [User], State}.
 
 turn(User, Turn, #{turn_number := TurnNumber,
                    wins := Wins,
                    losses := Losses,
                    max_turns := MaxTurns,
-                   user := User} = State) when Turn =:= heads; Turn =:= tails ->
+                   user := User} = State, _NukState)
+        when Turn =:= heads; Turn =:= tails ->
     NewTurnNumber = TurnNumber + 1,
     [Win, Loss] = process_turn(Turn),
     NewWins = Wins + Win,
@@ -66,10 +67,10 @@ turn(User, Turn, #{turn_number := TurnNumber,
         _ ->
             {ok, await_turn, [User], NewState}
     end;
-turn(_User, _Turn, _State) ->
+turn(_User, _Turn, _State, _NukState) ->
     {error, invalid_turn, "Invalid turn"}.
 
-finish(_State) ->
+finish(_State, _NukState) ->
     ok.
 
 %%====================================================================

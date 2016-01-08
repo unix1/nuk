@@ -112,7 +112,7 @@ Join a player to a game session
 Joins a given logged in user session to an existing game session. Game
 session must be created first, see [`create/2`](#create-2) and [`create/3`](#create-3).
 
-Calling this function triggers the [`nuk_game_engine:player_join/2`](nuk_game_engine.md#player_join-2)
+Calling this function triggers the [`nuk_game_engine:player_join/3`](nuk_game_engine.md#player_join-3)
 callback.
 
 <a name="leave-2"></a>
@@ -129,7 +129,7 @@ Remove a player from a game session
 This does the opposite of [`join/2`](#join-2) - it allows a player to leave an
 existing game session that the player has already joined.
 
-Calling this function triggers the [`nuk_game_engine:player_leave/2`](nuk_game_engine.md#player_leave-2)
+Calling this function triggers the [`nuk_game_engine:player_leave/3`](nuk_game_engine.md#player_leave-3)
 callback.
 
 <a name="list-0"></a>
@@ -178,7 +178,7 @@ This starts an existing game session. In general, at this point all players
 wishing to participate should have already joined the game via
 [`join/2`](#join-2).
 
-Calling this function triggers the [`nuk_game_engine:start/1`](nuk_game_engine.md#start-1) callback.
+Calling this function triggers the [`nuk_game_engine:start/2`](nuk_game_engine.md#start-2) callback.
 
 <a name="turn-3"></a>
 
@@ -196,7 +196,7 @@ turn. The `Turn` argument is an arbitrary term that is expected by the game
 engine. It is not validated by nuk and is passed to the game engine
 directly.
 
-Calling this function triggers the [`nuk_game_engine:turn/3`](nuk_game_engine.md#turn-3) callback.
+Calling this function triggers the [`nuk_game_engine:turn/4`](nuk_game_engine.md#turn-4) callback.
 
 <a name="unregister-1"></a>
 

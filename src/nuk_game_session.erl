@@ -16,6 +16,7 @@
 -export([new/1]).
 -export([get_game/1]).
 -export([get_game_state/1]).
+-export([get_nuk_state/1]).
 -export([get_players/1]).
 -export([get_players_count/1]).
 -export([get_players_turn/1]).
@@ -89,6 +90,15 @@ get_game(#{game := Game}) ->
 -spec get_game_state(Session :: session()) -> term().
 get_game_state(#{game_state := GameState}) ->
     GameState.
+
+%% @doc Get general nuk game state
+%%
+%% Returns the general nuk state in the form of {@link nuk_game_state:state()}
+%% data type. Use {@link nuk_game_state} module to operate on this data type.
+%% @end
+-spec get_nuk_state(Session :: session()) -> nuk_game_state:state().
+get_nuk_state(#{nuk_state := NukState}) ->
+    NukState.
 
 %% @doc Get players currently in the game session
 %%
@@ -218,7 +228,8 @@ remove_player(#{nuk_state := NukState} = Session, Player) ->
 %% @end
 -spec set_players(Session :: session(), Players :: [nuk_user:user()]) ->
     session().
-set_players(#{nuk_state := NukState} = Session, Players) when is_list(Players) ->
+set_players(#{nuk_state := NukState} = Session, Players)
+        when is_list(Players) ->
     Session#{nuk_state := nuk_game_state:set_players(NukState, Players)}.
 
 %% @doc Set players who's turn it is next
@@ -228,7 +239,8 @@ set_players(#{nuk_state := NukState} = Session, Players) when is_list(Players) -
 %% @end
 -spec set_players_turn(Session :: session(), Players :: [nuk_user:user()]) ->
     session().
-set_players_turn(#{nuk_state := NukState} = Session, Players) when is_list(Players) ->
+set_players_turn(#{nuk_state := NukState} = Session, Players)
+        when is_list(Players) ->
     Session#{nuk_state := nuk_game_state:set_players_turn(NukState, Players)}.
 
 %% @doc Set game session status
@@ -246,7 +258,8 @@ set_status(#{nuk_state := NukState} = Session, Status) when is_atom(Status) ->
 %% @end
 -spec set_turn_number(Session :: session(), TurnNumber :: non_neg_integer()) ->
     session().
-set_turn_number(#{nuk_state := NukState} = Session, TurnNumber) when is_integer(TurnNumber) ->
+set_turn_number(#{nuk_state := NukState} = Session, TurnNumber)
+        when is_integer(TurnNumber) ->
     Session#{nuk_state := nuk_game_state:set_turn_number(NukState, TurnNumber)}.
 
 %% @doc Set winners and losers
@@ -259,4 +272,6 @@ set_turn_number(#{nuk_state := NukState} = Session, TurnNumber) when is_integer(
                          Losers :: [nuk_user:user()]) ->
     session().
 set_winners_losers(#{nuk_state := NukState} = Session, Winners, Losers) ->
-    Session#{nuk_state := nuk_game_state:set_winners_losers(NukState, Winners, Losers)}.
+    Session#{nuk_state := nuk_game_state:set_winners_losers(NukState,
+                                                            Winners,
+                                                            Losers)}.

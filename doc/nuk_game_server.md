@@ -132,7 +132,7 @@ It adds the given user to the current game session after validating that
 - user hasn't already joined the game
 - maximum number of users allowed by the game wouldn't be exceeded
 
-Calling this function triggers the [`nuk_game_engine:player_join/2`](nuk_game_engine.md#player_join-2)
+Calling this function triggers the [`nuk_game_engine:player_join/3`](nuk_game_engine.md#player_join-3)
 callback.
 
 For public API [`nuk_games:join/2`](nuk_games.md#join-2) must be used.
@@ -152,7 +152,7 @@ This is a function powering the implementation of [`nuk_games:leave/2`](nuk_game
 It removes a given user from the current game session after validating that
 user is in the current game session.
 
-Calling this function triggers the [`nuk_game_engine:player_leave/2`](nuk_game_engine.md#player_leave-2)
+Calling this function triggers the [`nuk_game_engine:player_leave/3`](nuk_game_engine.md#player_leave-3)
 callback.
 
 For public API [`nuk_games:leave/2`](nuk_games.md#leave-2) must be used.
@@ -172,7 +172,7 @@ This is a function powering the implementation of [`nuk_games:start/2`](nuk_game
 It starts the current game session after validating that the user requesting
 the action is in the current game session.
 
-Calling this function triggers the [`nuk_game_engine:start/1`](nuk_game_engine.md#start-1) callback.
+Calling this function triggers the [`nuk_game_engine:start/2`](nuk_game_engine.md#start-2) callback.
 
 For public API [`nuk_games:start/2`](nuk_games.md#start-2) must be used.
 
@@ -203,7 +203,7 @@ This is a function powering the implementation of [`nuk_games:turn/3`](nuk_games
 It takes and processes a turn for a given player after verifying that the
 given player may make a turn at current stage of the game.
 
-Calling this function triggers the [`nuk_game_engine:turn/3`](nuk_game_engine.md#turn-3) callback.
+Calling this function triggers the [`nuk_game_engine:turn/4`](nuk_game_engine.md#turn-4) callback.
 The game engine may return the `invalid_turn` error if the turn data is
 not acceptable.
 
