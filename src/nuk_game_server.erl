@@ -298,10 +298,7 @@ handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
                     ok = finish_game(),
                     {reply, ok, StateNew}
             end
-    end;
-handle_call({finish}, _From, State) ->
-    %% TODO invoke game engine
-    {reply, ok, State}.
+    end.
 
 handle_cast(_Msg, State) -> {noreply, State}.
 
