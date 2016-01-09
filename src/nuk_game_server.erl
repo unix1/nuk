@@ -32,6 +32,8 @@
 %% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
+-type state() :: #{session => nuk_game_session:session()}.
+
 %%====================================================================
 %% Supervision
 %%====================================================================
@@ -39,6 +41,7 @@
 start_link(GameName) ->
     gen_server:start_link(?MODULE, [GameName], []).
 
+-spec init([GameName :: string()]) -> {ok, State :: state()}.
 init([GameName]) ->
     {ok, Game} = nuk_games:get(GameName),
     {ok, #{session => nuk_game_session:new(Game)}}.
@@ -238,6 +241,7 @@ handle_call({player_leave, User}, _From, #{session := GameSession} = State) ->
                                                                        Losers),
                     GameSession4 = nuk_game_session:remove_player(GameSession3, User),
                     StateNew = State#{session := GameSession4},
+                    ok = finish_game(),
                     {reply, ok, StateNew}
             end
     end;
@@ -291,6 +295,7 @@ handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
                                                                        Losers),
                     GameSession4 = nuk_game_session:set_players_turn(GameSession3, []),
                     StateNew = State#{session := GameSession4},
+                    ok = finish_game(),
                     {reply, ok, StateNew}
             end
     end;
@@ -300,6 +305,12 @@ handle_call({finish}, _From, State) ->
 
 handle_cast(_Msg, State) -> {noreply, State}.
 
+handle_info(finish, #{session := GameSession} = State) ->
+    GameModule = get_game_engine_module(GameSession),
+    GameState = nuk_game_session:get_game_state(GameSession),
+    NukState = nuk_game_session:get_nuk_state(GameSession),
+    GameModule:finish(GameState, NukState),
+    {stop, normal, State};
 handle_info(_Msg, State) -> {noreply, State}.
 
 terminate(_Reason, _State) -> ok.
@@ -383,3 +394,8 @@ check_user_can_act(GameSession, User) ->
         true ->
             ok
     end.
+
+-spec finish_game() -> ok.
+finish_game() ->
+    _Ref = erlang:send_after(5000, self(), finish),
+    ok.

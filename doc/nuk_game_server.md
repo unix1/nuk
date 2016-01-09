@@ -2,6 +2,7 @@
 
 # Module nuk_game_server #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
@@ -21,7 +22,22 @@ processing their results. This is the `gen_server` module that accomplishes
 the above.
 
 For public API to accessing this functionality use the [`nuk_games`](nuk_games.md)
-module. Do not call the functions of this module directly.<a name="index"></a>
+module. Do not call the functions of this module directly.
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-state">state()</a> ###
+
+
+<pre><code>
+state() = #{session =&gt; <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>}
+</code></pre>
+
+<a name="index"></a>
 
 ## Function Index ##
 
@@ -114,7 +130,10 @@ For public API [`nuk_games:get_game_session/1`](nuk_games.md#get_game_session-1)
 
 ### init/1 ###
 
-`init(X1) -> any()`
+<pre><code>
+init(GameName::[GameName::string()]) -&gt; {ok, State::<a href="#type-state">state()</a>}
+</code></pre>
+<br />
 
 <a name="join-2"></a>
 
