@@ -24,7 +24,6 @@
 -export([leave/2]).
 -export([get_session/1]).
 -export([turn/3]).
--export([finish/1]).
 
 %% Supervision
 -export([start_link/1, init/1]).
@@ -162,15 +161,6 @@ get_session(Pid) ->
     {error, invalid_turn, Extra :: string()}.
 turn(Pid, User, Turn) ->
     gen_server:call(Pid, {turn, User, Turn}).
-
-%% @doc End a game
-%%
-%% TODO figure out finish
-%%
-%% @end
--spec finish(Pid :: pid()) -> ok.
-finish(Pid) ->
-    ok = gen_server:call(Pid, {finish}).
 
 %%====================================================================
 %% Behavior callbacks

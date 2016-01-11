@@ -48,5 +48,4 @@ put(Pid) when is_pid(Pid) ->
 %% @end
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
-    Pid = list_to_pid(SessionId),
-    nuk_game_server:finish(Pid).
+    ok.

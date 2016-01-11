@@ -42,7 +42,7 @@ state() = #{session =&gt; <a href="nuk_game_session.md#type-session">nuk_game_se
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#create-3">create/3</a></td><td>Create a new game session.</td></tr><tr><td valign="top"><a href="#finish-1">finish/1</a></td><td>End a game.</td></tr><tr><td valign="top"><a href="#get_session-1">get_session/1</a></td><td>Get a snapshot of game session.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>Join a user to the game session.</td></tr><tr><td valign="top"><a href="#leave-2">leave/2</a></td><td>Remove a user from the game session.</td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a game.</td></tr><tr><td valign="top"><a href="#start_link-1">start_link/1</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr><tr><td valign="top"><a href="#turn-3">turn/3</a></td><td>Process player's turn.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#create-3">create/3</a></td><td>Create a new game session.</td></tr><tr><td valign="top"><a href="#get_session-1">get_session/1</a></td><td>Get a snapshot of game session.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>Join a user to the game session.</td></tr><tr><td valign="top"><a href="#leave-2">leave/2</a></td><td>Remove a user from the game session.</td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a game.</td></tr><tr><td valign="top"><a href="#start_link-1">start_link/1</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr><tr><td valign="top"><a href="#turn-3">turn/3</a></td><td>Process player's turn.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -77,19 +77,6 @@ callback.
 
 For public API [`nuk_games:create/2`](nuk_games.md#create-2) or [`nuk_games:create/3`](nuk_games.md#create-3) must
 be used.
-
-<a name="finish-1"></a>
-
-### finish/1 ###
-
-<pre><code>
-finish(Pid::pid()) -&gt; ok
-</code></pre>
-<br />
-
-End a game
-
-TODO figure out finish
 
 <a name="get_session-1"></a>
 
