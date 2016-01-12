@@ -72,7 +72,8 @@ put(Pid) when is_pid(Pid) ->
 
 %% @doc Delete a session
 %%
-%% Delete the session associated with the given session identifier.
+%% Delete the session associated with the given session identifier, and stop
+%% the associated {@link nuk_user_server}.
 %% @end
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->

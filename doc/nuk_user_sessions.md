@@ -44,7 +44,8 @@ delete(SessionId::string()) -&gt; ok
 
 Delete a session
 
-Delete the session associated with the given session identifier.
+Delete the session associated with the given session identifier, and stop
+the associated [`nuk_user_server`](nuk_user_server.md).
 
 <a name="get-1"></a>
 

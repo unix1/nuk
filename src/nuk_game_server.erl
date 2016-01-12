@@ -382,7 +382,7 @@ check_user_can_start(GameSession, User) ->
 %% @doc Check whether user can make a turn
 %% @private
 %%
-%% Checks wthat user is currently joined to the game session, and that it is
+%% Checks that user is currently joined to the game session, and that it is
 %% expected the user can make the turn.
 %% @end
 -spec check_user_can_turn(GameSession :: nuk_game_session:session(),
