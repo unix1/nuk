@@ -308,16 +308,33 @@ code_change(_OldVersion, State, _Extra) -> {ok, State}.
 %% Internal functions
 %%====================================================================
 
+%% @doc Get game engine module
+%% @private
+%%
+%% Extracts registered game engine module from the {@link nuk_game:game()} data
+%% type stored in current game session.
+%% @end
 -spec get_game_engine_module(GameSession :: nuk_game_session:session()) -> atom().
 get_game_engine_module(GameSession) ->
     Game = nuk_game_session:get_game(GameSession),
     nuk_game:get_module(Game).
 
+%% @doc Get max # of players
+%% @private
+%%
+%% Extracts maximum number of players allowed per game registration.
+%% @end
 -spec get_max_players(GameSession :: nuk_game_session:session()) -> integer().
 get_max_players(GameSession) ->
     Game = nuk_game_session:get_game(GameSession),
     nuk_game:get_max_players(Game).
 
+%% @doc Check whether a given user can join this game session
+%% @private
+%%
+%% Verifies user is not already part of the game session and maximum number
+%% of players hasn't been reached.
+%% @end
 -spec check_user_can_join(GameSession :: nuk_game_session:session(),
                           User :: nuk_user:user()) ->
     ok |
@@ -338,6 +355,11 @@ check_user_can_join(GameSession, User) ->
             end
     end.
 
+%% @doc Check whether a user can leave the game session
+%% @private
+%%
+%% Checks that user is currently joined to the game session.
+%% @end
 -spec check_user_can_leave(GameSession :: nuk_game_session:session(),
                            User :: nuk_user:user()) ->
     ok |
@@ -345,6 +367,11 @@ check_user_can_join(GameSession, User) ->
 check_user_can_leave(GameSession, User) ->
     check_user_can_act(GameSession, User).
 
+%% @doc Check whether user can start the game
+%% @private
+%%
+%% Checks that user is currently joined to the game session.
+%% @end
 -spec check_user_can_start(GameSession :: nuk_game_session:session(),
                            User :: nuk_user:user()) ->
     ok |
@@ -352,6 +379,12 @@ check_user_can_leave(GameSession, User) ->
 check_user_can_start(GameSession, User) ->
     check_user_can_act(GameSession, User).
 
+%% @doc Check whether user can make a turn
+%% @private
+%%
+%% Checks wthat user is currently joined to the game session, and that it is
+%% expected the user can make the turn.
+%% @end
 -spec check_user_can_turn(GameSession :: nuk_game_session:session(),
                           User :: nuk_user:user()) ->
     ok |
@@ -370,6 +403,11 @@ check_user_can_turn(GameSession, User) ->
             end
     end.
 
+%% @doc Check whether user can perform an action
+%% @private
+%%
+%% Checks that user is currently joined to the game session.
+%% @end
 -spec check_user_can_act(GameSession :: nuk_game_session:session(),
                          User :: nuk_user:user()) ->
     ok |
@@ -382,6 +420,11 @@ check_user_can_act(GameSession, User) ->
             ok
     end.
 
+%% @doc Finish the game after delay
+%% @private
+%%
+%% Sends the `finish' message to itself after a 5 second delay.
+%% @end
 -spec finish_game() -> ok.
 finish_game() ->
     _Ref = erlang:send_after(5000, self(), finish),
