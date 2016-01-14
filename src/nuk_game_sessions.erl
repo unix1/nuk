@@ -25,7 +25,8 @@
     {ok, Pid :: pid()} |
     {error, game_session_not_found, Extra :: string()}.
 get_pid(SessionId) ->
-    nuk_game_session_store_server:get_pid(SessionId).
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:get_pid(SessionId).
 
 %% @doc Create a new session
 %%
@@ -33,7 +34,8 @@ get_pid(SessionId) ->
 %% @end
 -spec put(Pid :: pid()) -> SessionId :: string().
 put(Pid) when is_pid(Pid) ->
-    nuk_game_session_store_server:put(Pid).
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:put(Pid).
 
 %% @doc Delete a session
 %%
@@ -41,4 +43,24 @@ put(Pid) when is_pid(Pid) ->
 %% @end
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
-    nuk_game_session_store_server:delete(SessionId).
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:delete(SessionId).
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
+%% @doc get the storage module
+%% @private
+%%
+%% Retrieves the storage module for game sessions from application settings.
+%% If not defined the default {@link nuk_game_session_store_server} will be
+%% returned.
+-spec get_storage_module() -> atom().
+get_storage_module() ->
+    case application:get_env(game_session_storage) of
+        undefined ->
+            nuk_game_session_store_server;
+        Module ->
+            Module
+    end.
