@@ -45,7 +45,8 @@ get(SessionId) ->
     {ok, pid()} |
     {error, user_session_not_found, Extra :: string()}.
 get_pid(SessionId) ->
-    nuk_user_session_store_server:get_pid(SessionId).
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:get_pid(SessionId).
 
 %% @doc Get user
 %%
@@ -68,7 +69,8 @@ get_user(SessionId) ->
 %% @end
 -spec put(Pid :: pid()) -> SessionId :: string().
 put(Pid) when is_pid(Pid) ->
-    nuk_user_session_store_server:put(Pid).
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:put(Pid).
 
 %% @doc Log out a user session
 %%
@@ -86,7 +88,8 @@ logout(SessionId) ->
 %% @end
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
-    nuk_user_session_store_server:delete(SessionId).
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:delete(SessionId).
 
 %% @doc List all sessions
 %%
@@ -94,4 +97,24 @@ delete(SessionId) ->
 %% @end
 -spec list() -> [nuk_user_session:session()].
 list() ->
-    nuk_user_session_store_server:list().
+    SessionStorageModule = get_storage_module(),
+    SessionStorageModule:list().
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
+
+%% @doc get the storage module
+%% @private
+%%
+%% Retrieves the storage module for user sessions from application settings.
+%% If not defined the default {@link nuk_user_session_store_server} will be
+%% returned.
+-spec get_storage_module() -> atom().
+get_storage_module() ->
+    case application:get_env(user_session_storage) of
+        undefined ->
+            nuk_user_session_store_server;
+        Module ->
+            Module
+    end.
