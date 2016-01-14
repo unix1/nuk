@@ -54,11 +54,11 @@ login(Username, Password) ->
     nuk_user_server:login(Username, Password).
 
 %% @doc Log out a user session
-%% @equiv nuk_user_sessions:delete(SessionId)
+%% @equiv nuk_user_sessions:logout(SessionId)
 %% @end
 -spec logout(SessionId :: string()) -> ok.
 logout(SessionId) ->
-    nuk_user_sessions:delete(SessionId).
+    nuk_user_sessions:logout(SessionId).
 
 %% @doc List all users
 %%

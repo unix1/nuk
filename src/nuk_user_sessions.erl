@@ -18,7 +18,7 @@
 -module(nuk_user_sessions).
 
 %% API
--export([get/1, get_pid/1, get_user/1, put/1, delete/1, list/0]).
+-export([get/1, get_pid/1, get_user/1, put/1, logout/1, delete/1, list/0]).
 
 %% @doc Get session
 %%
@@ -70,17 +70,22 @@ get_user(SessionId) ->
 put(Pid) when is_pid(Pid) ->
     nuk_user_session_store_server:put(Pid).
 
+%% @doc Log out a user session
+%%
+%% Logs out the given user session. Note that the {@link delete/1} happens
+%% after the {@link nuk_user_server} terminates successfully.
+%% @end
+-spec logout(SessionId :: string()) -> ok.
+logout(SessionId) ->
+    {ok, Pid} = get_pid(SessionId),
+    nuk_user_server:logout(Pid).
+
 %% @doc Delete a session
 %%
-%% Delete the session associated with the given session identifier, and stop
-%% the associated {@link nuk_user_server}.
+%% Delete the session associated with the given session identifier.
 %% @end
 -spec delete(SessionId :: string()) -> ok.
 delete(SessionId) ->
-    {ok, Pid} = get_pid(SessionId),
-    ok = nuk_user_server:logout(Pid),
-    %% TODO should below go to nuk_user_server? KIM that it doesn't have
-    %% the SessionId, so we'd have to pass it redundantly from here.
     nuk_user_session_store_server:delete(SessionId).
 
 %% @doc List all sessions

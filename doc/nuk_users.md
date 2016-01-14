@@ -90,7 +90,7 @@ logout(SessionId::string()) -&gt; ok
 </code></pre>
 <br />
 
-Equivalent to [`nuk_user_sessions:delete(SessionId)`](nuk_user_sessions.md#delete-1).
+Equivalent to [`nuk_user_sessions:logout(SessionId)`](nuk_user_sessions.md#logout-1).
 
 Log out a user session
 

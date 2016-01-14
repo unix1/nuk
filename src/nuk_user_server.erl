@@ -32,7 +32,7 @@ start_link() ->
     gen_server:start_link(?MODULE, [], []).
 
 init([]) ->
-    {ok, #{session => nuk_user_session:new()}}.
+    {ok, #{session_id => "", session => nuk_user_session:new()}}.
 
 %%====================================================================
 %% API
@@ -76,9 +76,9 @@ get_session(Pid) ->
 handle_call({login, Username, Password}, _From, #{session := Session} = State) ->
     case nuk_user_store_server:validate(Username, Password) of
         {ok, User} ->
-            SessionNew = nuk_user_session:set_user(Session, User),
-            StateNew = State#{session := SessionNew},
             SessionId = nuk_user_sessions:put(self()),
+            SessionNew = nuk_user_session:set_user(Session, User),
+            StateNew = State#{session_id := SessionId, session := SessionNew},
             {reply, {ok, SessionId}, StateNew};
         {error, Reason, Extra} ->
             {stop, normal, {error, Reason, Extra}, State}
@@ -92,6 +92,8 @@ handle_cast(_Msg, State) -> {noreply, State}.
 
 handle_info(_Msg, State) -> {noreply, State}.
 
-terminate(_Reason, _State) -> ok.
+terminate(_Reason, #{session_id := SessionId} = _State) ->
+    nuk_user_sessions:delete(SessionId),
+    ok.
 
 code_change(_OldVersion, State, _Extra) -> {ok, State}.

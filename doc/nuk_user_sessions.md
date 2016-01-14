@@ -26,7 +26,7 @@ The backend implementation of this is swappable. See
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Delete a session.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>Get session.</td></tr><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a process ID.</td></tr><tr><td valign="top"><a href="#get_user-1">get_user/1</a></td><td>Get user.</td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td>List all sessions.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Delete a session.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>Get session.</td></tr><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a process ID.</td></tr><tr><td valign="top"><a href="#get_user-1">get_user/1</a></td><td>Get user.</td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td>List all sessions.</td></tr><tr><td valign="top"><a href="#logout-1">logout/1</a></td><td>Log out a user session.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -44,8 +44,7 @@ delete(SessionId::string()) -&gt; ok
 
 Delete a session
 
-Delete the session associated with the given session identifier, and stop
-the associated [`nuk_user_server`](nuk_user_server.md).
+Delete the session associated with the given session identifier.
 
 <a name="get-1"></a>
 
@@ -100,6 +99,20 @@ list() -&gt; [<a href="nuk_user_session.md#type-session">nuk_user_session:sessio
 List all sessions
 
 Returns a list of all user sessions. Used in tests.
+
+<a name="logout-1"></a>
+
+### logout/1 ###
+
+<pre><code>
+logout(SessionId::string()) -&gt; ok
+</code></pre>
+<br />
+
+Log out a user session
+
+Logs out the given user session. Note that the [`delete/1`](#delete-1) happens
+after the [`nuk_user_server`](nuk_user_server.md) terminates successfully.
 
 <a name="put-1"></a>
 
