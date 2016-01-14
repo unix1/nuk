@@ -45,7 +45,8 @@
 %% @end
 -spec register(Game :: nuk_game:game()) -> ok.
 register(Game) ->
-    ok = nuk_game_store_server:put(Game).
+    StorageModule = nuk_app:get_storage_module(games),
+    ok = StorageModule:put(Game).
 
 %% @doc Unregister a game engine
 %%
@@ -54,7 +55,8 @@ register(Game) ->
 %% @end
 -spec unregister(GameName :: string()) -> ok.
 unregister(GameName) ->
-    ok = nuk_game_store_server:delete(GameName).
+    StorageModule = nuk_app:get_storage_module(games),
+    ok = StorageModule:delete(GameName).
 
 %% @doc Get a game by its name
 %%
@@ -66,7 +68,8 @@ unregister(GameName) ->
     {ok, nuk_game:game()} |
     {error, game_not_found, Extra :: string()}.
 get(GameName) ->
-    nuk_game_store_server:get(GameName).
+    StorageModule = nuk_app:get_storage_module(games),
+    StorageModule:get(GameName).
 
 %% @doc List all registered games
 %%
@@ -76,7 +79,8 @@ get(GameName) ->
 %% @end
 -spec list() -> [nuk_game:game()].
 list() ->
-    nuk_game_store_server:list().
+    StorageModule = nuk_app:get_storage_module(games),
+    StorageModule:list().
 
 %%====================================================================
 %% Game flow
