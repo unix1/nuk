@@ -31,7 +31,7 @@
 %% Behavior callbacks
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
--type state() :: #{session => nuk_game_session:session()}.
+-type state() :: #{session_id => string(), session => nuk_game_session:session()}.
 
 %%====================================================================
 %% Supervision
@@ -43,7 +43,7 @@ start_link(GameName) ->
 -spec init([GameName :: string()]) -> {ok, State :: state()}.
 init([GameName]) ->
     {ok, Game} = nuk_games:get(GameName),
-    {ok, #{session => nuk_game_session:new(Game)}}.
+    {ok, #{session_id => "", session => nuk_game_session:new(Game)}}.
 
 %%====================================================================
 %% API
@@ -177,8 +177,8 @@ handle_call({initialize, User, Options}, _From,
             GameSession1 = nuk_game_session:set_game_state(GameSession, GameState),
             GameSession2 = nuk_game_session:set_players(GameSession1, [User]),
             GameSession3 = nuk_game_session:set_status(GameSession2, initialized),
-            StateNew = State#{session := GameSession3},
             GameSessionId = nuk_game_sessions:put(self()),
+            StateNew = State#{session_id := GameSessionId, session := GameSession3},
             {reply, {ok, GameSessionId}, StateNew}
     end;
 handle_call({player_join, User}, _From, #{session := GameSession} = State) ->
@@ -300,7 +300,9 @@ handle_info(finish, #{session := GameSession} = State) ->
     {stop, normal, State};
 handle_info(_Msg, State) -> {noreply, State}.
 
-terminate(_Reason, _State) -> ok.
+terminate(_Reason, #{session_id := GameSessionId} = _State) ->
+    nuk_game_sessions:delete(GameSessionId),
+    ok.
 
 code_change(_OldVersion, State, _Extra) -> {ok, State}.
 

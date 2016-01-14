@@ -34,7 +34,7 @@ module. Do not call the functions of this module directly.
 
 
 <pre><code>
-state() = #{session =&gt; <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>}
+state() = #{session_id =&gt; string(), session =&gt; <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>}
 </code></pre>
 
 <a name="index"></a>

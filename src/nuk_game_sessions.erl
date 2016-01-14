@@ -15,7 +15,7 @@
 -module(nuk_game_sessions).
 
 %% API
--export([get_pid/1, put/1]).
+-export([get_pid/1, put/1, delete/1]).
 
 %% @doc Get a process ID
 %%
@@ -34,3 +34,11 @@ get_pid(SessionId) ->
 -spec put(Pid :: pid()) -> SessionId :: string().
 put(Pid) when is_pid(Pid) ->
     nuk_game_session_store_server:put(Pid).
+
+%% @doc Delete a session
+%%
+%% Delete the session associated with the given session identifier.
+%% @end
+-spec delete(SessionId :: string()) -> ok.
+delete(SessionId) ->
+    nuk_game_session_store_server:delete(SessionId).

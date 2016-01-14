@@ -23,12 +23,25 @@ The backend implementation of this is swappable. See
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a process ID.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Delete a session.</td></tr><tr><td valign="top"><a href="#get_pid-1">get_pid/1</a></td><td>Get a process ID.</td></tr><tr><td valign="top"><a href="#put-1">put/1</a></td><td>Create a new session.</td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
+
+<a name="delete-1"></a>
+
+### delete/1 ###
+
+<pre><code>
+delete(SessionId::string()) -&gt; ok
+</code></pre>
+<br />
+
+Delete a session
+
+Delete the session associated with the given session identifier.
 
 <a name="get_pid-1"></a>
 

@@ -47,5 +47,5 @@ put(Pid) when is_pid(Pid) ->
 %% results in `game_session_not_found' response.
 %% @end
 -spec delete(SessionId :: string()) -> ok.
-delete(SessionId) ->
+delete(_SessionId) ->
     ok.
