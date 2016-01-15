@@ -17,7 +17,8 @@
 %% @end
 -spec delete(Username :: string()) -> ok.
 delete(Username) ->
-    ok = nuk_user_store_server:delete(Username).
+    StorageModule = nuk_app:get_storage_module(users),
+    ok = StorageModule:delete(Username).
 
 %% @doc Get a user
 %%
@@ -29,7 +30,8 @@ delete(Username) ->
     {ok, nuk_user:user()} |
     {error, user_not_found, string()}.
 get(Username) ->
-    nuk_user_store_server:get(Username).
+    StorageModule = nuk_app:get_storage_module(users),
+    StorageModule:get(Username).
 
 %% @doc Create new or update an existing user
 %%
@@ -39,7 +41,8 @@ get(Username) ->
 %% @end
 -spec put(User :: nuk_user:user()) -> ok.
 put(User) ->
-    ok = nuk_user_store_server:put(User).
+    StorageModule = nuk_app:get_storage_module(users),
+    ok = StorageModule:put(User).
 
 %% @doc Login a user
 %%
@@ -51,7 +54,8 @@ put(User) ->
     {ok, SessionId :: string()} |
     {error, ErrorCode :: atom(), Extra :: string()}.
 login(Username, Password) ->
-    nuk_user_server:login(Username, Password).
+    StorageModule = nuk_app:get_storage_module(users),
+    nuk_user_server:login(Username, Password, StorageModule).
 
 %% @doc Log out a user session
 %% @equiv nuk_user_sessions:logout(SessionId)
@@ -68,4 +72,5 @@ logout(SessionId) ->
 %% @end
 -spec list() -> [nuk_user:user()].
 list() ->
-    nuk_user_store_server:list().
+    StorageModule = nuk_app:get_storage_module(users),
+    StorageModule:list().

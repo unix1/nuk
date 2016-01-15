@@ -22,7 +22,7 @@
 -export([code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 %% API
--export([login/2, logout/1, get_session/1]).
+-export([login/3, logout/1, get_session/1]).
 
 %%====================================================================
 %% Supervision
@@ -43,12 +43,13 @@ init([]) ->
 %% Attempts to log a user in given the username and password. Upon successful
 %% login a new process is spawned and the string session identifier returned.
 %% @end
--spec login(Username :: string(), Password :: string()) ->
+-spec login(Username :: string(), Password :: string(),
+            StorageModule :: atom()) ->
     {ok, string()} |
     {error, wrong_password | user_not_found, string()}.
-login(Username, Password) ->
+login(Username, Password, StorageModule) when is_atom(StorageModule) ->
     {ok, Pid} = supervisor:start_child(nuk_user_sup, []),
-    gen_server:call(Pid, {login, Username, Password}).
+    gen_server:call(Pid, {login, Username, Password, StorageModule}).
 
 %% @doc Log out a user
 %%
@@ -73,8 +74,9 @@ get_session(Pid) ->
 %% Behavior callbacks
 %%====================================================================
 
-handle_call({login, Username, Password}, _From, #{session := Session} = State) ->
-    case nuk_user_store_server:validate(Username, Password) of
+handle_call({login, Username, Password, StorageModule}, _From,
+            #{session := Session} = State) ->
+    case StorageModule:validate(Username, Password) of
         {ok, User} ->
             SessionId = nuk_user_sessions:put(self()),
             SessionNew = nuk_user_session:set_user(Session, User),

@@ -24,7 +24,7 @@ directly.<a name="index"></a>
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#get_session-1">get_session/1</a></td><td>Get logged in user session.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#login-2">login/2</a></td><td>Log in a user.</td></tr><tr><td valign="top"><a href="#logout-1">logout/1</a></td><td>Log out a user.</td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#get_session-1">get_session/1</a></td><td>Get logged in user session.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#login-3">login/3</a></td><td>Log in a user.</td></tr><tr><td valign="top"><a href="#logout-1">logout/1</a></td><td>Log out a user.</td></tr><tr><td valign="top"><a href="#start_link-0">start_link/0</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr></table>
 
 
 <a name="functions"></a>
@@ -76,12 +76,12 @@ returned data type.
 
 `init(X1) -> any()`
 
-<a name="login-2"></a>
+<a name="login-3"></a>
 
-### login/2 ###
+### login/3 ###
 
 <pre><code>
-login(Username::string(), Password::string()) -&gt; {ok, string()} | {error, wrong_password | user_not_found, string()}
+login(Username::string(), Password::string(), StorageModule::atom()) -&gt; {ok, string()} | {error, wrong_password | user_not_found, string()}
 </code></pre>
 <br />
 
