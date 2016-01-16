@@ -14,7 +14,8 @@ Additional info
 
 - [developer overview](guide/developer-overview.md)
 - [guide](guide/guide.md)
-- [implementing a game](implementing-a-game.md) (coming soon)
+- [implementing a game](guide/implementing-a-game.md) (coming soon)
+- [reference documentation](doc/README.md)
 
 what nuk is *not*:
 ------------------
