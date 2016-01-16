@@ -6,8 +6,9 @@ nuk is a generic turn based game server written in Erlang.
 Features
 --------
 
-- write and plug in your own turn based game engine using behavior callbacks
-- implement or plug in your own user and session storage
+- provides framework for registering games, users and controlling their sessions
+- allows you to write and plug in your own turn based game engine using behavior callbacks
+- allows to use custom external storage using simple behaviors
 
 Additional info
 ---------------
