@@ -12,9 +12,9 @@ Features
 Additional info
 ---------------
 
-- developer overview (coming soon)
-- guide (coming soon)
-- implementing a game (coming soon)
+- [developer overview](guide/developer-overview.md)
+- [guide](guide/guide.md)
+- [implementing a game](implementing-a-game.md) (coming soon)
 
 what nuk is *not*:
 ------------------
