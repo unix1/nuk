@@ -1,20 +1,20 @@
 nuk
 =====
 
-nuk is a generic turn based game server written in Erlang. It provides common functionality useful for turn based game servers. Game developers need only implement the game itself.
+nuk is a generic turn based game server written in Erlang.
 
 Features
 --------
 
-- write and plug in your own game using behavior callbacks
+- write and plug in your own turn based game engine using behavior callbacks
 - implement or plug in your own user and session storage
 
 Additional info
 ---------------
 
-- technical overview (coming soon)
+- developer overview (coming soon)
 - guide (coming soon)
-- examples (coming soon)
+- implementing a game (coming soon)
 
 what nuk is *not*:
 ------------------
