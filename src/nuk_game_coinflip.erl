@@ -9,8 +9,6 @@
 
 -export([initialize/2, player_join/3, player_leave/3, start/2, turn/4, finish/2]).
 
-%% TODO errors should probably also return state
-
 initialize(User, OptionsOverride) ->
     OptionsDefault = #{
         turn_number => 0,
