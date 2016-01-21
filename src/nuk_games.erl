@@ -194,7 +194,7 @@ start(GameSessionId, UserSessionId) ->
 %% useful for players to get a new game session state during the game.
 %%
 %% Note that {@link nuk_game_session:get_game_state/1} can be used to extract
-%% arbitrary game state set by the specific {@link nuk_game_engine}.
+%% {@link nuk_game_engine_state} set by the specific {@link nuk_game_engine}.
 %% @end
 -spec get_game_session(GameSessionId :: string(), UserSessionId :: string()) ->
     {ok, nuk_game_session:session()} |

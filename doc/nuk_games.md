@@ -96,7 +96,7 @@ data from the returned [`nuk_game_session:session()`](nuk_game_session.md#type-s
 useful for players to get a new game session state during the game.
 
 Note that [`nuk_game_session:get_game_state/1`](nuk_game_session.md#get_game_state-1) can be used to extract
-arbitrary game state set by the specific [`nuk_game_engine`](nuk_game_engine.md).
+[`nuk_game_engine_state`](nuk_game_engine_state.md) set by the specific [`nuk_game_engine`](nuk_game_engine.md).
 
 <a name="join-2"></a>
 

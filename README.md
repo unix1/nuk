@@ -13,8 +13,8 @@ Features
 Additional info
 ---------------
 
-- [developer overview](guide/developer-overview.md)
 - [guide](guide/guide.md)
+- [developer overview](guide/developer-overview.md)
 - [implementing a game](guide/implementing-a-game.md) (coming soon)
 - [reference documentation](doc/README.md)
 

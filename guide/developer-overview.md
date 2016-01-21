@@ -21,7 +21,7 @@ Public interfaces:
 - `nuk_games` for all game related actions: registering, starting, joining, turns, etc.
 - `nuk_game_sessions` for all game session related actions
 
-nuk provides behaviors for implementing callbacks for user and session storage:
+nuk provides behaviors for implementing callbacks for user, game and session storage:
 
 - `nuk_user_storage`
 - `nuk_user_session_storage`
@@ -35,7 +35,7 @@ The provided implementations of these behaviors are:
 - `nuk_game_store_server`: stores registered games in local server state and provides behavior callbacks to operate on game registration
 - `nuk_game_session_store_server`: provides behavior callbacks to operate on game sessions; the main function of this behavior is to translate a session token to a `nuk_game_server` process ID
 
-These implementations are only there for proof on concept and testing purposes. i.e. you might want to hook up a more robust user and session storage than the default one provided with nuk. This is possible by implementing above behaviors and then setting them in nuk application environment values:
+These implementations are only there for proof on concept and testing purposes. i.e. you might want to hook up a more robust user and session storage than the default implementations provided with nuk. This is possible by implementing above behaviors and then setting them in nuk application environment values:
 
 ```erlang
 application:set_env(nuk, users, custom_user_store_service).
@@ -53,6 +53,7 @@ Games
 
 nuk starts a new `nuk_game_server` worker whenever a game session is started. `nuk_game_server` does the following:
 
+- handles interaction with the players
 - keeps the state and general data about the specific game session and its players
 - invokes game engine callbacks for specific events during the game
 - stores game engine state and passes it with every callback
