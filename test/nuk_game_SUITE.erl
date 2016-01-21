@@ -16,6 +16,7 @@
     nuk_games_list/1,
     nuk_games_start_with_options_invalid/1,
     nuk_games_start_with_options_success/1,
+    nuk_games_leave_invalid/1,
     nuk_games_leave_success/1,
     nuk_game_flow/1
 ]).
@@ -31,6 +32,7 @@ all() ->
         nuk_games_list,
         nuk_games_start_with_options_invalid,
         nuk_games_start_with_options_success,
+        nuk_games_leave_invalid,
         nuk_games_leave_success,
         nuk_game_flow
     ].
@@ -83,7 +85,9 @@ nuk_games_start_with_options_invalid(_) ->
     {ok, UserSessionId1} = nuk_users:login("User1", "Pass1"),
 
     % create a game with an invalid option
-    {error, invalid_options, _} = nuk_games:create(UserSessionId1, "Coin Flip", [{foo, "bar"}]).
+    {error, invalid_options, _} = nuk_games:create(UserSessionId1,
+                                                   "Coin Flip",
+                                                   [{foo, "bar"}]).
 
 nuk_games_start_with_options_success(_) ->
     % register game
@@ -97,9 +101,13 @@ nuk_games_start_with_options_success(_) ->
 
     % create a game and join players
     MaxTurns = 10,
-    {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip", [{max_turns, MaxTurns}]),
-    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId),
-    ExpectedGameState1 = #{turn_number => 0, wins => 0, losses => 0, max_turns => MaxTurns, user => User1},
+    {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip",
+                                           [{max_turns, MaxTurns}]),
+    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ExpectedGameState1 = nuk_game_engine_state:new([],
+                                                   #{max_turns => MaxTurns},
+                                                   #{"User1" => #{wins => 0,
+                                                                  losses => 0}}),
     ExpectedGameState1 = nuk_game_session:get_game_state(GameSession1).
 
 nuk_games_leave_invalid(_) ->
@@ -119,19 +127,21 @@ nuk_games_leave_invalid(_) ->
     {ok, GameSessionId} = nuk_games:create(UserSessionId1, "Coin Flip"),
 
     % test leave on wrong game
-    {error, game_session_not_found} = nuk_games:leave("foobar", UserSessionId1),
+    {error, game_session_not_found, _} = nuk_games:leave("foobar", UserSessionId1),
     % test leave with bad user session
-    {error, user_session_not_found} = nuk_games:leave(GameSessionId, "foobar"),
+    {error, user_session_not_found, _} = nuk_games:leave(GameSessionId, "foobar"),
     % test leave with good user session, but not part of the game
-    {error, user_not_in_game} = nuk_games:leave(GameSessionId, UserSessionId2),
+    {error, user_not_in_game, _} = nuk_games:leave(GameSessionId, UserSessionId2),
     % TODO test game_already_started error after game starts, not possible in 1p game
     % test leave after game starts - should complete the game
     ok = nuk_games:start(GameSessionId, UserSessionId1),
     ok = nuk_games:leave(GameSessionId, UserSessionId1),
-    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId),
-    #{turn_number := 0,
-      wins := 0,
-      losses := 0} = nuk_game_session:get_game_state(GameSession1),
+    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ExpectedGameState1 = nuk_game_engine_state:new([],
+                                                   #{max_turns => 3},
+                                                   #{"User1" => #{wins => 0,
+                                                                  losses => 0}}),
+    ExpectedGameState1 = nuk_game_session:get_game_state(GameSession1),
     [] = nuk_game_session:get_players(GameSession1),
     0 = nuk_game_session:get_players_count(GameSession1),
     false = nuk_game_session:has_player(GameSession1, User1),
@@ -158,10 +168,12 @@ nuk_games_leave_success(_) ->
 
     % leave before game starts - this should work and finish the game
     ok = nuk_games:leave(GameSessionId, UserSessionId1),
-    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId),
-    #{turn_number := 0,
-      wins := 0,
-      losses := 0} = nuk_game_session:get_game_state(GameSession1),
+    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ExpectedGameState1 = nuk_game_engine_state:new([],
+                                                   #{max_turns => 3},
+                                                   #{"User1" => #{wins => 0,
+                                                                  losses => 0}}),
+    ExpectedGameState1 = nuk_game_session:get_game_state(GameSession1),
     [] = nuk_game_session:get_players(GameSession1),
     0 = nuk_game_session:get_players_count(GameSession1),
     false = nuk_game_session:has_player(GameSession1, User1),
@@ -194,9 +206,12 @@ nuk_game_flow(_) ->
     {error, game_session_not_found, _} = nuk_games:join("foobar", UserSessionId1),
     {error, user_already_joined, _} = nuk_games:join(GameSessionId, UserSessionId1),
     {error, max_users_reached, _} = nuk_games:join(GameSessionId, UserSessionId2),
-    {error, game_session_not_found, _} = nuk_games:get_game_session("foobar"),
-    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId),
-    ExpectedGameState1 = #{turn_number => 0, wins => 0, losses => 0, max_turns => 3, user => User1},
+    {error, game_session_not_found, _} = nuk_games:get_game_session("foobar", UserSessionId1),
+    {ok, GameSession1} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ExpectedGameState1 = nuk_game_engine_state:new([],
+                                                   #{max_turns => 3},
+                                                   #{"User1" => #{wins => 0,
+                                                                  losses => 0}}),
     ExpectedGameState1 = nuk_game_session:get_game_state(GameSession1),
     [User1] = nuk_game_session:get_players(GameSession1),
     1 = nuk_game_session:get_players_count(GameSession1),
@@ -212,8 +227,11 @@ nuk_game_flow(_) ->
     {error, user_session_not_found, _} = nuk_games:start(GameSessionId, "foobar"),
     {error, game_session_not_found, _} = nuk_games:start("foobar", UserSessionId1),
     ok = nuk_games:start(GameSessionId, UserSessionId1),
-    {ok, GameSession2} = nuk_games:get_game_session(GameSessionId),
-    ExpectedGameState2 = #{turn_number => 0, wins => 0, losses => 0, max_turns => 3, user => User1},
+    {ok, GameSession2} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ExpectedGameState2 = nuk_game_engine_state:new([],
+                                                   #{max_turns => 3},
+                                                   #{"User1" => #{wins => 0,
+                                                                  losses => 0}}),
     ExpectedGameState2 = nuk_game_session:get_game_state(GameSession2),
     [User1] = nuk_game_session:get_players(GameSession2),
     1 = nuk_game_session:get_players_count(GameSession2),
@@ -231,13 +249,13 @@ nuk_game_flow(_) ->
     % TODO test bad_turn_order: cannot be tested in 1p mode
     {error, invalid_turn, _} = nuk_games:turn(GameSessionId, UserSessionId1, "foobar"),
     ok = nuk_games:turn(GameSessionId, UserSessionId1, heads),
-    {ok, GameSession3} = nuk_games:get_game_session(GameSessionId),
-    #{turn_number := ActualTurnNumber3,
-      wins := ActualWins3,
-      losses := ActualLosses3} = nuk_game_session:get_game_state(GameSession3),
+    {ok, GameSession3} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ActualGameState3 = nuk_game_session:get_game_state(GameSession3),
+    #{wins := ActualWins3,
+      losses := ActualLosses3} = nuk_game_engine_state:get_player(ActualGameState3,
+                                                                  "User1"),
     ActualWinsAndLosses3 = ActualWins3 + ActualLosses3,
     ActualWinsAndLosses3 = 1,
-    ActualTurnNumber3 = 1,
     [User1] = nuk_game_session:get_players(GameSession3),
     1 = nuk_game_session:get_players_count(GameSession3),
     true = nuk_game_session:has_player(GameSession3, User1),
@@ -249,13 +267,13 @@ nuk_game_flow(_) ->
 
     % turn 2
     ok = nuk_games:turn(GameSessionId, UserSessionId1, heads),
-    {ok, GameSession4} = nuk_games:get_game_session(GameSessionId),
-    #{turn_number := ActualTurnNumber4,
-      wins := ActualWins4,
-      losses := ActualLosses4} = nuk_game_session:get_game_state(GameSession4),
+    {ok, GameSession4} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ActualGameState4 = nuk_game_session:get_game_state(GameSession4),
+    #{wins := ActualWins4,
+      losses := ActualLosses4} = nuk_game_engine_state:get_player(ActualGameState4,
+                                                                  "User1"),
     ActualWinsAndLosses4 = ActualWins4 + ActualLosses4,
     ActualWinsAndLosses4 = 2,
-    ActualTurnNumber4 = 2,
     [User1] = nuk_game_session:get_players(GameSession4),
     1 = nuk_game_session:get_players_count(GameSession4),
     true = nuk_game_session:has_player(GameSession4, User1),
@@ -267,13 +285,13 @@ nuk_game_flow(_) ->
 
     % final turn 3
     ok = nuk_games:turn(GameSessionId, UserSessionId1, heads),
-    {ok, GameSession5} = nuk_games:get_game_session(GameSessionId),
-    #{turn_number := ActualTurnNumber5,
-      wins := ActualWins5,
-      losses := ActualLosses5} = nuk_game_session:get_game_state(GameSession5),
+    {ok, GameSession5} = nuk_games:get_game_session(GameSessionId, UserSessionId1),
+    ActualGameState5 = nuk_game_session:get_game_state(GameSession5),
+    #{wins := ActualWins5,
+      losses := ActualLosses5} = nuk_game_engine_state:get_player(ActualGameState5,
+                                                                  "User1"),
     ActualWinsAndLosses5 = ActualWins5 + ActualLosses5,
     ActualWinsAndLosses5 = 3,
-    ActualTurnNumber5 = 3,
     [User1] = nuk_game_session:get_players(GameSession5),
     1 = nuk_game_session:get_players_count(GameSession5),
     true = nuk_game_session:has_player(GameSession5, User1),

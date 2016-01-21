@@ -20,12 +20,12 @@ The game registration functions are:[`register/2`](#register-2),
 
 The game flow functions are: [`create/2`](#create-2), [`create/3`](#create-3),
 [`join/2`](#join-2), [`leave/2`](#leave-2), [`start/2`](#start-2),
-[`get_game_session/1`](#get_game_session-1), [`turn/3`](#turn-3).<a name="index"></a>
+[`get_game_session/2`](#get_game_session-2), [`turn/3`](#turn-3).<a name="index"></a>
 
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#create-2">create/2</a></td><td>Create a new game session with default options.</td></tr><tr><td valign="top"><a href="#create-3">create/3</a></td><td>Create a new game with options.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>Get a game by its name.</td></tr><tr><td valign="top"><a href="#get_game_session-1">get_game_session/1</a></td><td>Get game session containing nuk and game engine states.</td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>Join a player to a game session.</td></tr><tr><td valign="top"><a href="#leave-2">leave/2</a></td><td>Remove a player from a game session.</td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td>List all registered games.</td></tr><tr><td valign="top"><a href="#register-1">register/1</a></td><td>Register a game engine.</td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a game.</td></tr><tr><td valign="top"><a href="#turn-3">turn/3</a></td><td>Make a player turn.</td></tr><tr><td valign="top"><a href="#unregister-1">unregister/1</a></td><td>Unregister a game engine.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#create-2">create/2</a></td><td>Create a new game session with default options.</td></tr><tr><td valign="top"><a href="#create-3">create/3</a></td><td>Create a new game with options.</td></tr><tr><td valign="top"><a href="#get-1">get/1</a></td><td>Get a game by its name.</td></tr><tr><td valign="top"><a href="#get_game_session-2">get_game_session/2</a></td><td>Get game session containing nuk and game engine states.</td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>Join a player to a game session.</td></tr><tr><td valign="top"><a href="#leave-2">leave/2</a></td><td>Remove a player from a game session.</td></tr><tr><td valign="top"><a href="#list-0">list/0</a></td><td>List all registered games.</td></tr><tr><td valign="top"><a href="#register-1">register/1</a></td><td>Register a game engine.</td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a game.</td></tr><tr><td valign="top"><a href="#turn-3">turn/3</a></td><td>Make a player turn.</td></tr><tr><td valign="top"><a href="#unregister-1">unregister/1</a></td><td>Unregister a game engine.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -79,12 +79,12 @@ This can be used to look up any registered game metadata for a specific game
 engine. Given a game name, get a [`nuk_game:game()`](nuk_game.md#type-game) data type. Then use
 [`nuk_game`](nuk_game.md) module functions to extract needed information.
 
-<a name="get_game_session-1"></a>
+<a name="get_game_session-2"></a>
 
-### get_game_session/1 ###
+### get_game_session/2 ###
 
 <pre><code>
-get_game_session(GameSessionId::string()) -&gt; {ok, <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>} | {error, game_session_not_found, Extra::string()}
+get_game_session(GameSessionId::string(), UserSessionId::string()) -&gt; {ok, <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>} | {error, game_session_not_found, Extra::string()} | {error, user_session_not_found, Extra::string()} | {error, user_not_in_game, Extra::string()}
 </code></pre>
 <br />
 

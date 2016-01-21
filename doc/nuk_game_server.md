@@ -42,7 +42,7 @@ state() = #{session_id =&gt; string(), session =&gt; <a href="nuk_game_session.m
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#create-3">create/3</a></td><td>Create a new game session.</td></tr><tr><td valign="top"><a href="#get_session-1">get_session/1</a></td><td>Get a snapshot of game session.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>Join a user to the game session.</td></tr><tr><td valign="top"><a href="#leave-2">leave/2</a></td><td>Remove a user from the game session.</td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a game.</td></tr><tr><td valign="top"><a href="#start_link-1">start_link/1</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr><tr><td valign="top"><a href="#turn-3">turn/3</a></td><td>Process player's turn.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#code_change-3">code_change/3</a></td><td></td></tr><tr><td valign="top"><a href="#create-3">create/3</a></td><td>Create a new game session.</td></tr><tr><td valign="top"><a href="#get_session-2">get_session/2</a></td><td>Get a snapshot of game session.</td></tr><tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td></td></tr><tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td></td></tr><tr><td valign="top"><a href="#handle_info-2">handle_info/2</a></td><td></td></tr><tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>Join a user to the game session.</td></tr><tr><td valign="top"><a href="#leave-2">leave/2</a></td><td>Remove a user from the game session.</td></tr><tr><td valign="top"><a href="#start-2">start/2</a></td><td>Start a game.</td></tr><tr><td valign="top"><a href="#start_link-1">start_link/1</a></td><td></td></tr><tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr><tr><td valign="top"><a href="#turn-3">turn/3</a></td><td>Process player's turn.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -78,22 +78,22 @@ callback.
 For public API [`nuk_games:create/2`](nuk_games.md#create-2) or [`nuk_games:create/3`](nuk_games.md#create-3) must
 be used.
 
-<a name="get_session-1"></a>
+<a name="get_session-2"></a>
 
-### get_session/1 ###
+### get_session/2 ###
 
 <pre><code>
-get_session(Pid::pid()) -&gt; <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>
+get_session(Pid::pid(), User::<a href="nuk_user.md#type-user">nuk_user:user()</a>) -&gt; <a href="nuk_game_session.md#type-session">nuk_game_session:session()</a>
 </code></pre>
 <br />
 
 Get a snapshot of game session
 
 This is a function powering the implementation of
-[`nuk_games:get_game_session/1`](nuk_games.md#get_game_session-1). It returns the current snapshot of
+[`nuk_games:get_game_session/2`](nuk_games.md#get_game_session-2). It returns the current snapshot of
 the general nuk game session state and arbitrary game engine state.
 
-For public API [`nuk_games:get_game_session/1`](nuk_games.md#get_game_session-1) must be used.
+For public API [`nuk_games:get_game_session/2`](nuk_games.md#get_game_session-2) must be used.
 
 <a name="handle_call-3"></a>
 

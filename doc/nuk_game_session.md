@@ -13,7 +13,7 @@
 ## Description ##
 This module is used to operate on [`nuk_game_session:session()`](nuk_game_session.md#type-session) data
 type. This data type is used when retrieving the game session state from
-[`nuk_games:get_game_session/1`](nuk_games.md#get_game_session-1). It tracks the following data:
+[`nuk_games:get_game_session/2`](nuk_games.md#get_game_session-2). It tracks the following data:
 - Game [`nuk_game:game()`](nuk_game.md#type-game) which this session is for
 - nuk's general game session state
 - Game engine's arbitrary state
@@ -35,8 +35,9 @@ module to operate on this data type. It contains the following:
 extract
 - `nuk_state`: [`nuk_game_state:state()`](nuk_game_state.md#type-state) data type, use functions in
 this module to extract specific values from this state
-- `game_state`: an arbitrary term that stores the game engine specific
-state, use functions provided by the respective game engine to extract
+- `game_state`: [`nuk_game_engine_state:state()`](nuk_game_engine_state.md#type-state) data type containing
+game engine specific state; use [`nuk_game_engine_state`](nuk_game_engine_state.md) functions
+to operate on this data
 information from this data type
 
 <a name="index"></a>
@@ -83,16 +84,14 @@ Returns the [`nuk_game:game()`](nuk_game.md#type-game) data type to which this s
 ### get_game_state/1 ###
 
 <pre><code>
-get_game_state(Session::<a href="#type-session">session()</a>) -&gt; term()
+get_game_state(Session::<a href="#type-session">session()</a>) -&gt; <a href="nuk_game_engine_state.md#type-state">nuk_game_engine_state:state()</a>
 </code></pre>
 <br />
 
 Get game engine arbitrary state
 
-Returns an arbitrary game state set by the game engine. Since this value
-is specific to a specific game engine, it is the responsibility of the
-respective game engine to provide functions to extract information
-from this value.
+Returns game engine specific state of the session. Refer to
+[`nuk_game_engine_state`](nuk_game_engine_state.md) module to operate on this data type.
 
 <a name="get_nuk_state-1"></a>
 
@@ -247,8 +246,7 @@ new(Game::<a href="nuk_game.md#type-game">nuk_game:game()</a>) -&gt; <a href="#t
 Create a new [`session()`](#type-session) data type.
 
 `Game` is a [`nuk_game:game()`](nuk_game.md#type-game) data type which is stored inside the
-session. All other values are set to their defaults. For default values see
-the top description of this module.
+session. All other values are set to their defaults.
 
 <a name="remove_player-2"></a>
 

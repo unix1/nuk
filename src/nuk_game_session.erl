@@ -3,7 +3,7 @@
 %%
 %% This module is used to operate on {@link nuk_game_session:session()} data
 %% type. This data type is used when retrieving the game session state from
-%% {@link nuk_games:get_game_session/1}. It tracks the following data:
+%% {@link nuk_games:get_game_session/2}. It tracks the following data:
 %% - Game {@link nuk_game:game()} which this session is for
 %% - nuk's general game session state
 %% - Game engine's arbitrary state
@@ -40,15 +40,16 @@
 
 -opaque session() :: #{game => nuk_game:game(),
                        nuk_state => nuk_game_state:state(),
-                       game_state => term()}.
+                       game_state => nuk_game_engine_state:state()}.
 %% Data type used to represent a game session state. Use functions in this
 %% module to operate on this data type. It contains the following:
 %% - `game': {@link nuk_game:game()} data type, use {@link get_game/1} to
 %%   extract
 %% - `nuk_state': {@link nuk_game_state:state()} data type, use functions in
 %%   this module to extract specific values from this state
-%% - `game_state': an arbitrary term that stores the game engine specific
-%%   state, use functions provided by the respective game engine to extract
+%% - `game_state': {@link nuk_game_engine_state:state()} data type containing
+%%   game engine specific state; use {@link nuk_game_engine_state} functions
+%%   to operate on this data
 %%   information from this data type
 
 %%====================================================================
@@ -58,8 +59,7 @@
 %% @doc Create a new {@link session()} data type.
 %%
 %% `Game' is a {@link nuk_game:game()} data type which is stored inside the
-%% session. All other values are set to their defaults. For default values see
-%% the top description of this module.
+%% session. All other values are set to their defaults.
 %% @end
 -spec new(Game :: nuk_game:game()) -> session().
 new(Game) ->
@@ -70,7 +70,7 @@ new(Game) ->
                      players_turn => [],
                      players_winners => [],
                      players_losers => []},
-      game_state => nil}.
+      game_state => nuk_game_engine_state:new([], [], #{})}.
 
 %% @doc Get game
 %%
@@ -82,12 +82,10 @@ get_game(#{game := Game}) ->
 
 %% @doc Get game engine arbitrary state
 %%
-%% Returns an arbitrary game state set by the game engine. Since this value
-%% is specific to a specific game engine, it is the responsibility of the
-%% respective game engine to provide functions to extract information
-%% from this value.
+%% Returns game engine specific state of the session. Refer to
+%% {@link nuk_game_engine_state} module to operate on this data type.
 %% @end
--spec get_game_state(Session :: session()) -> term().
+-spec get_game_state(Session :: session()) -> nuk_game_engine_state:state().
 get_game_state(#{game_state := GameState}) ->
     GameState.
 

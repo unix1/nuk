@@ -22,7 +22,7 @@
 -export([start/2]).
 -export([join/2]).
 -export([leave/2]).
--export([get_session/1]).
+-export([get_session/2]).
 -export([turn/3]).
 
 %% Supervision
@@ -133,14 +133,15 @@ start(Pid, User) ->
 %% @doc Get a snapshot of game session
 %%
 %% This is a function powering the implementation of
-%% {@link nuk_games:get_game_session/1}. It returns the current snapshot of
+%% {@link nuk_games:get_game_session/2}. It returns the current snapshot of
 %% the general nuk game session state and arbitrary game engine state.
 %%
-%% For public API {@link nuk_games:get_game_session/1} must be used.
+%% For public API {@link nuk_games:get_game_session/2} must be used.
 %% @end
--spec get_session(Pid :: pid()) -> nuk_game_session:session().
-get_session(Pid) ->
-    gen_server:call(Pid, {get_session}).
+-spec get_session(Pid :: pid(), User :: nuk_user:user()) ->
+    nuk_game_session:session().
+get_session(Pid, User) ->
+    gen_server:call(Pid, {get_session, User}).
 
 %% @doc Process player's turn
 %%
@@ -229,8 +230,9 @@ handle_call({player_leave, User}, _From, #{session := GameSession} = State) ->
                     GameSession3 = nuk_game_session:set_winners_losers(GameSession2,
                                                                        Winners,
                                                                        Losers),
-                    GameSession4 = nuk_game_session:remove_player(GameSession3, User),
-                    StateNew = State#{session := GameSession4},
+                    GameSession4 = nuk_game_session:set_players_turn(GameSession3, []),
+                    GameSession5 = nuk_game_session:remove_player(GameSession4, User),
+                    StateNew = State#{session := GameSession5},
                     ok = finish_game(),
                     {reply, ok, StateNew}
             end
@@ -253,8 +255,13 @@ handle_call({start, User}, _From, #{session := GameSession} = State) ->
             StateNew = State#{session := GameSession4},
             {reply, ok, StateNew}
     end;
-handle_call({get_session}, _From, #{session := GameSession} = State) ->
-    {reply, GameSession, State};
+handle_call({get_session, User}, _From, #{session := GameSession} = State) ->
+    Username = nuk_user:get_username(User),
+    GameState = nuk_game_session:get_game_state(GameSession),
+    GameStateFiltered = filter_for_player(GameState, Username),
+    GameSessionFiltered = nuk_game_session:set_game_state(GameSession,
+                                                          GameStateFiltered),
+    {reply, GameSessionFiltered, State};
 handle_call({turn, User, Turn}, _From, #{session := GameSession} = State) ->
     case check_user_can_turn(GameSession, User) of
         {error, ErrorCode, Reason} ->
@@ -421,6 +428,22 @@ check_user_can_act(GameSession, User) ->
         true ->
             ok
     end.
+
+%% @doc Filter state for specific player
+%% @private
+%%
+%% Filters the full game state down to strip game engine private data, and
+%% private state of other players so it is suitable for consumption by an
+%% individual player.
+-spec filter_for_player(GameState :: nuk_game_engine_state:state(),
+                        Username :: string()) ->
+    nuk_game_engine_state:state().
+filter_for_player(GameState, Username) ->
+    StatePrivate = [],
+    StatePublic = nuk_game_engine_state:get_public(GameState),
+    StatePlayer = nuk_game_engine_state:get_player(GameState, Username),
+    StatePlayers = #{Username => StatePlayer},
+    nuk_game_engine_state:new(StatePrivate, StatePublic, StatePlayers).
 
 %% @doc Finish the game after delay
 %% @private

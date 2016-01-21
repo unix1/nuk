@@ -10,7 +10,7 @@
 %%
 %% The game flow functions are: {@link create/2}, {@link create/3},
 %% {@link join/2}, {@link leave/2}, {@link start/2},
-%% {@link get_game_session/1}, {@link turn/3}.
+%% {@link get_game_session/2}, {@link turn/3}.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -29,7 +29,7 @@
 -export([join/2]).
 -export([leave/2]).
 -export([start/2]).
--export([get_game_session/1]).
+-export([get_game_session/2]).
 -export([turn/3]).
 
 %%====================================================================
@@ -196,15 +196,17 @@ start(GameSessionId, UserSessionId) ->
 %% Note that {@link nuk_game_session:get_game_state/1} can be used to extract
 %% arbitrary game state set by the specific {@link nuk_game_engine}.
 %% @end
--spec get_game_session(GameSessionId :: string()) ->
+-spec get_game_session(GameSessionId :: string(), UserSessionId :: string()) ->
     {ok, nuk_game_session:session()} |
-    {error, game_session_not_found, Extra :: string()}.
-get_game_session(GameSessionId) ->
-    case nuk_game_sessions:get_pid(GameSessionId) of
-        {error, game_session_not_found, Reason} ->
-            {error, game_session_not_found, Reason};
-        {ok, GamePid} ->
-            {ok, nuk_game_server:get_session(GamePid)}
+    {error, game_session_not_found, Extra :: string()} |
+    {error, user_session_not_found, Extra :: string()} |
+    {error, user_not_in_game, Extra :: string()}.
+get_game_session(GameSessionId, UserSessionId) ->
+    case get_user_game_pid(UserSessionId, GameSessionId) of
+        {error, ErrorCode, Reason} ->
+            {error, ErrorCode, Reason};
+        {ok, User, GamePid} ->
+            {ok, nuk_game_server:get_session(GamePid, User)}
     end.
 
 %% @doc Make a player turn
