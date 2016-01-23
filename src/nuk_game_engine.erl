@@ -18,8 +18,7 @@
 -callback player_join(Player :: nuk_user:user(),
                       EngineState :: nuk_game_engine_state:state(),
                       NukState :: nuk_game_state:state()) ->
-    {ok, NewEngineState :: nuk_game_engine_state:state()} |
-    {error, ErrorCode :: atom(), Extra :: string()}.
+    {ok, NewEngineState :: nuk_game_engine_state:state()}.
 
 -callback player_leave(Player :: nuk_user:user(), 
                        EngineState :: nuk_game_engine_state:state(),
@@ -43,7 +42,6 @@
      NewEngineState :: nuk_game_engine_state:state()} |
     {ok, complete, Winners :: [nuk_user:user()], Losers :: [nuk_user:user()],
      NewEngineState :: nuk_game_engine_state:state()} |
-    {error, bad_turn_order, Extra :: string()} |
     {error, invalid_turn, Extra :: string()}.
 
 -callback finish(EngineState :: nuk_game_engine_state:state(),
