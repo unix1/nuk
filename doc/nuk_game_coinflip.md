@@ -5,7 +5,7 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-nuk game coin flip.
+`nuk_game_coinflip_multi` module.
 
 __Behaviours:__ [`nuk_game_engine`](nuk_game_engine.md).
 
@@ -31,7 +31,10 @@ __Behaviours:__ [`nuk_game_engine`](nuk_game_engine.md).
 
 ### initialize/2 ###
 
-`initialize(User, OptionsOverride) -> any()`
+<pre><code>
+initialize(User::<a href="nuk_user.md#type-user">nuk_user:user()</a>, OptionsOverride::list()) -&gt; {error, invalid_options, string()} | {ok, <a href="nuk_game_engine_state.md#type-state">nuk_game_engine_state:state()</a>}
+</code></pre>
+<br />
 
 <a name="player_join-3"></a>
 
