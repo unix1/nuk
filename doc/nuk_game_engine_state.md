@@ -41,7 +41,7 @@ All above data is of type `term()` - i.e. it's up to the game engine
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_all-1">get_all/1</a></td><td>Get all components of engine state.</td></tr><tr><td valign="top"><a href="#get_player-2">get_player/2</a></td><td>Get player specific state.</td></tr><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get a map of all player states.</td></tr><tr><td valign="top"><a href="#get_private-1">get_private/1</a></td><td>Get private state.</td></tr><tr><td valign="top"><a href="#get_public-1">get_public/1</a></td><td>Get public state.</td></tr><tr><td valign="top"><a href="#new-3">new/3</a></td><td>Create new a new <a href="#type-state"><code>state()</code></a> data type.</td></tr><tr><td valign="top"><a href="#put_player-3">put_player/3</a></td><td>Puts a state for a new or existing player.</td></tr><tr><td valign="top"><a href="#set_all-4">set_all/4</a></td><td>Set all components of the engine state.</td></tr><tr><td valign="top"><a href="#set_player-3">set_player/3</a></td><td>Set a state for an existing player.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set all players state.</td></tr><tr><td valign="top"><a href="#set_private-2">set_private/2</a></td><td>Set private state.</td></tr><tr><td valign="top"><a href="#set_public-2">set_public/2</a></td><td>Set public state.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_all-1">get_all/1</a></td><td>Get all components of engine state.</td></tr><tr><td valign="top"><a href="#get_player-2">get_player/2</a></td><td>Get player specific state.</td></tr><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get a map of all player states.</td></tr><tr><td valign="top"><a href="#get_private-1">get_private/1</a></td><td>Get private state.</td></tr><tr><td valign="top"><a href="#get_public-1">get_public/1</a></td><td>Get public state.</td></tr><tr><td valign="top"><a href="#new-3">new/3</a></td><td>Create new a new <a href="#type-state"><code>state()</code></a> data type.</td></tr><tr><td valign="top"><a href="#put_player-3">put_player/3</a></td><td>Put a state for a new or existing player.</td></tr><tr><td valign="top"><a href="#remove_player-2">remove_player/2</a></td><td>Remove player from players state.</td></tr><tr><td valign="top"><a href="#set_all-4">set_all/4</a></td><td>Set all components of the engine state.</td></tr><tr><td valign="top"><a href="#set_player-3">set_player/3</a></td><td>Set a state for an existing player.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set all players state.</td></tr><tr><td valign="top"><a href="#set_private-2">set_private/2</a></td><td>Set private state.</td></tr><tr><td valign="top"><a href="#set_public-2">set_public/2</a></td><td>Set public state.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -135,10 +135,23 @@ put_player(State::<a href="#type-state">state()</a>, Username::string(), Player:
 </code></pre>
 <br />
 
-Puts a state for a new or existing player
+Put a state for a new or existing player
 
 Sets a state for a specific player; if the Username doesn't exist, it is
 added; if it exists its data is overwritten.
+
+<a name="remove_player-2"></a>
+
+### remove_player/2 ###
+
+<pre><code>
+remove_player(State::<a href="#type-state">state()</a>, Username::string()) -&gt; <a href="#type-state">state()</a>
+</code></pre>
+<br />
+
+Remove player from players state
+
+Completely removes a player from the map of player states
 
 <a name="set_all-4"></a>
 

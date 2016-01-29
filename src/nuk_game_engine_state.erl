@@ -20,6 +20,7 @@
 -export([set_private/2]).
 -export([set_public/2]).
 -export([put_player/3]).
+-export([remove_player/2]).
 -export([set_player/3]).
 -export([set_players/2]).
 
@@ -113,7 +114,7 @@ set_private(State, Private) ->
 set_public(State, Public) ->
     State#{public := Public}.
 
-%% @doc Puts a state for a new or existing player
+%% @doc Put a state for a new or existing player
 %%
 %% Sets a state for a specific player; if the Username doesn't exist, it is
 %% added; if it exists its data is overwritten.
@@ -122,6 +123,14 @@ set_public(State, Public) ->
     state().
 put_player(#{players := Players} = State, Username, Player) ->
     State#{players := Players#{Username => Player}}.
+
+%% @doc Remove player from players state
+%%
+%% Completely removes a player from the map of player states
+%% @end
+-spec remove_player(State :: state(), Username :: string()) -> state().
+remove_player(#{players := Players}, Username) ->
+    maps:remove(Username, Players).
 
 %% @doc Set a state for an existing player
 %%

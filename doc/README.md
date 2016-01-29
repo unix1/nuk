@@ -10,6 +10,7 @@
 <tr><td><a href="nuk_app.md" class="module">nuk_app</a></td></tr>
 <tr><td><a href="nuk_game.md" class="module">nuk_game</a></td></tr>
 <tr><td><a href="nuk_game_coinflip.md" class="module">nuk_game_coinflip</a></td></tr>
+<tr><td><a href="nuk_game_coinflip_multi.md" class="module">nuk_game_coinflip_multi</a></td></tr>
 <tr><td><a href="nuk_game_engine.md" class="module">nuk_game_engine</a></td></tr>
 <tr><td><a href="nuk_game_engine_state.md" class="module">nuk_game_engine_state</a></td></tr>
 <tr><td><a href="nuk_game_server.md" class="module">nuk_game_server</a></td></tr>
