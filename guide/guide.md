@@ -18,7 +18,7 @@ For example, if we have implemented a Coin Flip game, we can register it like th
 
 ```erlang
 % create a game data type passing name, module, min and max players
-Game = nuk_game:new("Coin Flip", nuk_game_coinflip, 1, 1),
+Game = nuk_game:new("Coin Flip", nuk_game_coinflip, 1, 2),
 
 % register the game
 ok = nuk_games:register(Game).
@@ -103,7 +103,7 @@ GameState = nuk_game_session:get_game_state(GameSession).
 PublicState = nuk_game_engine_state:get_public(GameState).
 
 % game player specific state
-PlayerState = nuk_game_engine_state:get_player("User1").
+PlayerState = nuk_game_engine_state:get_player(GameState, "User1").
 ```
 
 Here's how to make a turn:
@@ -117,7 +117,7 @@ Note that in the above example, to make a turn we supply the game and user sessi
 After the turn is made, the players can proceed to get the game session and state data as shown above and keep making turns until the game ends. Once the game ends, the status will be `complete` and winners and losers can then be obtained:
 
 ```erlang
-completed = nuk_game_session:get_status(GameSession).
+complete = nuk_game_session:get_status(GameSession).
 {Winners, Losers} = nuk_game_session:get_winners_losers(GameSession).
 ```
 
