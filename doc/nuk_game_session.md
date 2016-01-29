@@ -45,7 +45,7 @@ information from this data type
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_player-2">add_player/2</a></td><td>Add a player to the game session.</td></tr><tr><td valign="top"><a href="#get_game-1">get_game/1</a></td><td>Get game.</td></tr><tr><td valign="top"><a href="#get_game_state-1">get_game_state/1</a></td><td>Get game engine arbitrary state.</td></tr><tr><td valign="top"><a href="#get_nuk_state-1">get_nuk_state/1</a></td><td>Get general nuk game state.</td></tr><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_count-1">get_players_count/1</a></td><td>Get number of players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_turn-1">get_players_turn/1</a></td><td>Get players who's turn it is next.</td></tr><tr><td valign="top"><a href="#get_status-1">get_status/1</a></td><td>Get game session status.</td></tr><tr><td valign="top"><a href="#get_turn_number-1">get_turn_number/1</a></td><td>Get turn number.</td></tr><tr><td valign="top"><a href="#get_winners_losers-1">get_winners_losers/1</a></td><td>Get winners and losers lists.</td></tr><tr><td valign="top"><a href="#has_player-2">has_player/2</a></td><td>Is a player a member of this game session?.</td></tr><tr><td valign="top"><a href="#increment_turn_number-1">increment_turn_number/1</a></td><td>Increments the internal turn number.</td></tr><tr><td valign="top"><a href="#is_players_turn-2">is_players_turn/2</a></td><td>Is it a given player's turn?.</td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td>Create a new <a href="#type-session"><code>session()</code></a> data type.</td></tr><tr><td valign="top"><a href="#remove_player-2">remove_player/2</a></td><td>Remove a player from the game session.</td></tr><tr><td valign="top"><a href="#set_game_state-2">set_game_state/2</a></td><td>Sets game engine state in the session.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set a list of players to the current game session.</td></tr><tr><td valign="top"><a href="#set_players_turn-2">set_players_turn/2</a></td><td>Set players who's turn it is next.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>Set game session status.</td></tr><tr><td valign="top"><a href="#set_turn_number-2">set_turn_number/2</a></td><td>Set turn number.</td></tr><tr><td valign="top"><a href="#set_winners_losers-3">set_winners_losers/3</a></td><td>Set winners and losers.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_player-2">add_player/2</a></td><td>Add a player to the game session.</td></tr><tr><td valign="top"><a href="#get_game-1">get_game/1</a></td><td>Get game.</td></tr><tr><td valign="top"><a href="#get_game_state-1">get_game_state/1</a></td><td>Get game engine arbitrary state.</td></tr><tr><td valign="top"><a href="#get_nuk_state-1">get_nuk_state/1</a></td><td>Get general nuk game state.</td></tr><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_count-1">get_players_count/1</a></td><td>Get number of players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_turn-1">get_players_turn/1</a></td><td>Get players whose turn it is next.</td></tr><tr><td valign="top"><a href="#get_status-1">get_status/1</a></td><td>Get game session status.</td></tr><tr><td valign="top"><a href="#get_turn_number-1">get_turn_number/1</a></td><td>Get turn number.</td></tr><tr><td valign="top"><a href="#get_winners_losers-1">get_winners_losers/1</a></td><td>Get winners and losers lists.</td></tr><tr><td valign="top"><a href="#has_player-2">has_player/2</a></td><td>Is a player a member of this game session?.</td></tr><tr><td valign="top"><a href="#increment_turn_number-1">increment_turn_number/1</a></td><td>Increments the internal turn number.</td></tr><tr><td valign="top"><a href="#is_players_turn-2">is_players_turn/2</a></td><td>Is it a given player's turn?.</td></tr><tr><td valign="top"><a href="#new-1">new/1</a></td><td>Create a new <a href="#type-session"><code>session()</code></a> data type.</td></tr><tr><td valign="top"><a href="#remove_player-2">remove_player/2</a></td><td>Remove a player from the game session.</td></tr><tr><td valign="top"><a href="#set_game_state-2">set_game_state/2</a></td><td>Sets game engine state in the session.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set a list of players to the current game session.</td></tr><tr><td valign="top"><a href="#set_players_turn-2">set_players_turn/2</a></td><td>Set players whose turn it is next.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>Set game session status.</td></tr><tr><td valign="top"><a href="#set_turn_number-2">set_turn_number/2</a></td><td>Set turn number.</td></tr><tr><td valign="top"><a href="#set_winners_losers-3">set_winners_losers/3</a></td><td>Set winners and losers.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -143,11 +143,11 @@ get_players_turn(Session::<a href="#type-session">session()</a>) -&gt; [<a href=
 </code></pre>
 <br />
 
-Get players who's turn it is next
+Get players whose turn it is next
 
 Returns a list of [`nuk_user:user()`](nuk_user.md#type-user) data types that represent a list
 of players who the game engine is expecting to make the turn(s) next. i.e.
-the answer to "who's turn is it?" question.
+the answer to "whose turn is it?" question.
 
 <a name="get_status-1"></a>
 
@@ -299,9 +299,9 @@ set_players_turn(Session::<a href="#type-session">session()</a>, Players::[<a hr
 </code></pre>
 <br />
 
-Set players who's turn it is next
+Set players whose turn it is next
 
-In cases where [`nuk_game_engine`](nuk_game_engine.md) callback returns the players who's
+In cases where [`nuk_game_engine`](nuk_game_engine.md) callback returns the players whose
 turn it is next, nuk uses this function to update them in its session state.
 
 <a name="set_status-2"></a>

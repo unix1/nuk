@@ -74,11 +74,11 @@ new() ->
 get_players(#{players := Players}) ->
     Players.
 
-%% @doc Get players who's turn it is next
+%% @doc Get players whose turn it is next
 %%
 %% Returns a list of {@link nuk_user:user()} data types that represent a list
 %% of players who the game engine is expecting to make the turn(s) next. i.e.
-%% the answer to "who's turn is it?" question.
+%% the answer to "whose turn is it?" question.
 %% @end
 -spec get_players_turn(State :: state()) -> [nuk_user:user()].
 get_players_turn(#{players_turn := PlayersTurn}) ->
@@ -122,7 +122,7 @@ get_winners_losers(#{players_winners := Winners, players_losers := Losers}) ->
 set_players(State, Players) when is_list(Players) ->
     State#{players := Players}.
 
-%% @doc Set players who's turn it is next
+%% @doc Set players whose turn it is next
 %%
 %% Sets a new list of players, replacing an existing list.
 %% @end

@@ -60,7 +60,7 @@ status() = nil | initialized | await_turn | complete
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_turn-1">get_players_turn/1</a></td><td>Get players who's turn it is next.</td></tr><tr><td valign="top"><a href="#get_status-1">get_status/1</a></td><td>Get game session status.</td></tr><tr><td valign="top"><a href="#get_turn_number-1">get_turn_number/1</a></td><td>Get turn number.</td></tr><tr><td valign="top"><a href="#get_winners_losers-1">get_winners_losers/1</a></td><td>Get winners and losers lists.</td></tr><tr><td valign="top"><a href="#new-0">new/0</a></td><td>Create a new <a href="#type-state"><code>state()</code></a> data type.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set a list of players to the current game session.</td></tr><tr><td valign="top"><a href="#set_players_turn-2">set_players_turn/2</a></td><td>Set players who's turn it is next.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>Set status.</td></tr><tr><td valign="top"><a href="#set_turn_number-2">set_turn_number/2</a></td><td>Set turn number.</td></tr><tr><td valign="top"><a href="#set_winners_losers-3">set_winners_losers/3</a></td><td>Set winners and losers.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#get_players-1">get_players/1</a></td><td>Get players currently in the game session.</td></tr><tr><td valign="top"><a href="#get_players_turn-1">get_players_turn/1</a></td><td>Get players whose turn it is next.</td></tr><tr><td valign="top"><a href="#get_status-1">get_status/1</a></td><td>Get game session status.</td></tr><tr><td valign="top"><a href="#get_turn_number-1">get_turn_number/1</a></td><td>Get turn number.</td></tr><tr><td valign="top"><a href="#get_winners_losers-1">get_winners_losers/1</a></td><td>Get winners and losers lists.</td></tr><tr><td valign="top"><a href="#new-0">new/0</a></td><td>Create a new <a href="#type-state"><code>state()</code></a> data type.</td></tr><tr><td valign="top"><a href="#set_players-2">set_players/2</a></td><td>Set a list of players to the current game session.</td></tr><tr><td valign="top"><a href="#set_players_turn-2">set_players_turn/2</a></td><td>Set players whose turn it is next.</td></tr><tr><td valign="top"><a href="#set_status-2">set_status/2</a></td><td>Set status.</td></tr><tr><td valign="top"><a href="#set_turn_number-2">set_turn_number/2</a></td><td>Set turn number.</td></tr><tr><td valign="top"><a href="#set_winners_losers-3">set_winners_losers/3</a></td><td>Set winners and losers.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -90,11 +90,11 @@ get_players_turn(State::<a href="#type-state">state()</a>) -&gt; [<a href="nuk_u
 </code></pre>
 <br />
 
-Get players who's turn it is next
+Get players whose turn it is next
 
 Returns a list of [`nuk_user:user()`](nuk_user.md#type-user) data types that represent a list
 of players who the game engine is expecting to make the turn(s) next. i.e.
-the answer to "who's turn is it?" question.
+the answer to "whose turn is it?" question.
 
 <a name="get_status-1"></a>
 
@@ -174,7 +174,7 @@ set_players_turn(State::<a href="#type-state">state()</a>, Players::[<a href="nu
 </code></pre>
 <br />
 
-Set players who's turn it is next
+Set players whose turn it is next
 
 Sets a new list of players, replacing an existing list.
 

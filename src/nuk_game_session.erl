@@ -115,11 +115,11 @@ get_players(#{nuk_state := NukState}) ->
 get_players_count(Session) ->
     length(get_players(Session)).
 
-%% @doc Get players who's turn it is next
+%% @doc Get players whose turn it is next
 %%
 %% Returns a list of {@link nuk_user:user()} data types that represent a list
 %% of players who the game engine is expecting to make the turn(s) next. i.e.
-%% the answer to "who's turn is it?" question.
+%% the answer to "whose turn is it?" question.
 %% @end
 -spec get_players_turn(Session :: session()) -> [nuk_user:user()].
 get_players_turn(#{nuk_state := NukState}) ->
@@ -230,9 +230,9 @@ set_players(#{nuk_state := NukState} = Session, Players)
         when is_list(Players) ->
     Session#{nuk_state := nuk_game_state:set_players(NukState, Players)}.
 
-%% @doc Set players who's turn it is next
+%% @doc Set players whose turn it is next
 %%
-%% In cases where {@link nuk_game_engine} callback returns the players who's
+%% In cases where {@link nuk_game_engine} callback returns the players whose
 %% turn it is next, nuk uses this function to update them in its session state.
 %% @end
 -spec set_players_turn(Session :: session(), Players :: [nuk_user:user()]) ->

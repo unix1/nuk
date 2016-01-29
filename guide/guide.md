@@ -73,7 +73,7 @@ After the game has started players can request to get the data in the game sessi
 - game registration data
 - general nuk game state, containing information about
     - players in the game
-    - turn information: turn number and who's turn it is next
+    - turn information: turn number and whose turn it is next
 - game engine specific game state, consisting of
     - private game state which will always be empty for every player
     - public game state which is shared among all players
@@ -93,7 +93,7 @@ Players = nuk_game_session:get_players(GameSession).
 % status, just started games will most likely be in await_turn
 await_turn = nuk_game_session:get_status(GameSession).
 
-% who's turn is it next?
+% whose turn is it next?
 NextTurnPlayers = nuk_game_session:get_players_turn(GameSession).
 
 % game specific state provided by the game engine, e.g. coin flip game above
