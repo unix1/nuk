@@ -12,10 +12,14 @@
 %% API
 -export([new/2, check_password/2, get_username/1]).
 -export_type([user/0]).
+-export_type([username/0]).
 
--opaque user() :: #{username => string(), password => string()}.
+-opaque user() :: #{username => username(), password => string()}.
 %% Data type used to operate on users in nuk. Use functions in this module to
 %% operate on this data type.
+
+-type username() :: string() | anonymous.
+%% Data type for user name, can be any string or atom `anonymous'.
 
 %%====================================================================
 %% API
@@ -49,6 +53,6 @@ check_password(#{password := StoredPassword}, EnteredPassword) ->
 %%
 %% Extract username from {@link nuk_user:user()} data type.
 %% @end
--spec get_username(user()) -> string().
+-spec get_username(user()) -> username().
 get_username(#{username := Username}) ->
     Username.

@@ -17,7 +17,7 @@
 -export([new/0, get_user/1, set_user/2]).
 -export_type([session/0]).
 
--opaque session() :: #{username => string(), user => nuk_user:user()}.
+-opaque session() :: #{username => nuk_user:username(), user => nuk_user:user()}.
 
 %%====================================================================
 %% API
